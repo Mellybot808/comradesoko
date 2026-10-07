@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="en-KE">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f7f8f2">
+    <meta
+      name="description"
+      content="Soko la Comrades na Majirani: discover student sellers and local providers for gas, water, food, groceries, rooms, and services around Kenyan campuses."
+    >
+    <title>ComradeSoko — Your Campus Marketplace in Kenya</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    >
+    <link rel="stylesheet" href="styles.css">
+    <script src="institutions.js" defer></script>
+    <script src="tvet-institutions.js" defer></script>
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="#" aria-label="ComradeSoko home">
+          <span class="brand-mark" aria-hidden="true">c.</span>
+          <span>comrade<span class="brand-accent">soko</span></span>
+        </a>
+        <nav class="main-nav" aria-label="Main navigation">
+          <a class="nav-link active" href="#discover">Discover</a>
+          <a class="nav-link" href="#categories">Categories</a>
+          <a class="nav-link" href="#trending">Trending</a>
+          <a class="nav-link" href="#house-hunting">Rooms</a>
+          <a class="nav-link" href="#developers-hub">Comrades</a>
+        </nav>
+        <button class="button button-dark header-cta" type="button" id="account-button">Join / account <span aria-hidden="true">↗</span></button>
+        <a class="header-support" href="https://wa.me/254764658897?text=Hi%20ComradeSoko%20Support%2C%20I%20need%20help." target="_blank" rel="noopener noreferrer" aria-label="Get help on WhatsApp: plus 254 764 658 897">
+          <span aria-hidden="true">?</span><span>Help</span>
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="discover">
+        <div class="institution-prompt">
+          <span class="institution-icon" aria-hidden="true">⌖</span>
+          <div class="institution-copy">
+            <label for="campus-filter">FIRST, CHOOSE YOUR INSTITUTION</label>
+            <span>Type to jump to a university, college, or campus; results stay local.</span>
+          </div>
+          <select id="campus-filter" required aria-describedby="institution-status">
+            <option value="">Choose your institution</option>
+          </select>
+        </div>
+        <p class="institution-status" id="institution-status" aria-live="polite">Choose your institution to unlock your local soko.</p>
+        <p class="institution-sources">University names: <a href="https://www.cue.or.ke/" target="_blank" rel="noopener noreferrer">Commission for University Education</a>. Registered and licensed TVET names (7 Oct 2026 snapshot): <a href="https://www.tveta.go.ke/accredited-tvet-institutions/" target="_blank" rel="noopener noreferrer">TVET Authority register</a>.</p>
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="live-dot"></span> YOUR CAMPUS. YOUR PEOPLE. YOUR SOKO.</div>
+          <h1>Campus life,<br><span>sorted.</span></h1>
+          <p class="hero-description">Soko la Comrades na Majirani. Find gas, water, chapati, fresh fades and the people making campus happen. We connect buyers and sellers; we are not the seller.</p>
+          <form class="search-bar" id="search-form" role="search">
+            <label class="search-field">
+              <span class="search-icon" aria-hidden="true">⌕</span>
+              <span class="sr-only">Search products, services, or sellers</span>
+              <input id="search-input" type="search" placeholder="Search gas, water, braids, chapati..." autocomplete="off" disabled>
+            </label>
+            <span class="search-divider" aria-hidden="true"></span>
+            <label class="location-field">
+              <span class="location-icon" aria-hidden="true">⌖</span>
+              <span class="sr-only">Filter by campus area</span>
+              <select id="area-filter" disabled>
+                <option value="">Any campus area</option>
+              </select>
+            </label>
+            <button class="button button-green search-button" type="submit" disabled>Search <span aria-hidden="true">→</span></button>
+          </form>
+          <div class="hero-footnote">
+            <span class="avatars" aria-hidden="true"><i>J</i><i>A</i><i>M</i></span>
+            <span>Find a comrade. Support a hustle.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="market-section" id="categories">
+        <div class="section-heading">
+          <div>
+            <div class="eyebrow section-eyebrow">WHAT DO YOU NEED TODAY?</div>
+            <h2>Find it on your campus.</h2>
+          </div>
+          <a class="text-link" href="#trending">See trending <span aria-hidden="true">↘</span></a>
+        </div>
+        <div class="category-grid" aria-label="Filter listings by category">
+          <button class="category-tile" type="button" data-category="gas" aria-pressed="false"><span class="category-icon">🔥</span><span>Gas delivery</span><span class="category-arrow">↗</span></button>
+          <button class="category-tile" type="button" data-category="water" aria-pressed="false"><span class="category-icon">💧</span><span>Water delivery</span><span class="category-arrow">↗</span></button>
+          <button class="category-tile" type="button" data-category="groceries" aria-pressed="false"><span class="category-icon">🍎</span><span>Fruits &amp; groceries</span><span class="category-arrow">↗</span></button>
+          <button class="category-tile" type="button" data-category="food" aria-pressed="false"><span class="category-icon">🍛</span><span>Food &amp; cake</span><span class="category-arrow">↗</span></button>
+          <button class="category-tile" type="button" data-category="clothes" aria-pressed="false"><span class="category-icon">👕</span><span>Clothes &amp; shoes</span><span class="category-arrow">↗</span></button>
+          <button class="category-tile" type="button" data-category="beauty" aria-pressed="false"><span class="category-icon">💈</span><span>Barber &amp; hair</span><span class="category-arrow">↗</span></button>
+          <button class="category-tile" type="button" data-category="tech" aria-pressed="false"><span class="category-icon">💻</span><span>Developers &amp; techies</span><span class="category-arrow">↗</span></button>
+          <button class="category-tile" type="button" data-category="services" aria-pressed="false"><span class="category-icon">🧺</span><span>Other services</span><span class="category-arrow">↗</span></button>
+        </div>
+
+        <div class="listings-heading" id="trending">
+          <div>
+            <h3>Trending near you <span class="heading-sparkle">✳</span></h3>
+            <p id="results-label">Choose your institution to see local sellers</p>
+          </div>
+          <span class="listing-count" id="listing-count">00 SELLERS</span>
+        </div>
+
+        <div class="listing-grid" id="listing-grid" aria-live="polite">
+          <article class="listing-card" data-category="gas" data-search="gas refill 13kg gas delivery kamau kisii" data-campus="kisii university" data-area="manyatta" data-seller="Kamau's Gas Spot" data-product="13kg gas refill">
+            <div class="listing-image image-gas"><span class="image-badge">DEMO LISTING</span><span class="listing-emoji">🔥</span></div>
+            <div class="listing-details">
+              <div class="seller-line"><span class="seller-avatar avatar-orange">K</span><span>Kamau's Gas Spot</span><span class="demo-badge">SAMPLE</span></div>
+              <h4>13kg gas refill, delivered</h4>
+              <div class="listing-meta"><span>⌖ Manyatta</span><span>Gas delivery</span></div>
+              <div class="listing-bottom"><strong>KSh 3,200</strong><span class="rating">★ 4.8 <small>(12)</small></span></div>
+              <a class="whatsapp-button" target="_blank" rel="noopener noreferrer" data-whatsapp href="https://wa.me/?text=Hi%2C%20I%20saw%20your%2013kg%20gas%20refill%20on%20ComradeSoko."><span>☏</span> Order on WhatsApp</a>
+            </div>
+          </article>
+          <article class="listing-card" data-category="water" data-search="water 20 litre refill delivery clean water kisii" data-campus="kisii university" data-area="main gate" data-seller="ClearDrop Water" data-product="20L water refill">
+            <div class="listing-image image-water"><span class="image-badge">DEMO LISTING</span><span class="listing-emoji">💧</span></div>
+            <div class="listing-details">
+              <div class="seller-line"><span class="seller-avatar avatar-blue">C</span><span>ClearDrop Water</span><span class="demo-badge">SAMPLE</span></div>
+              <h4>20L refill to your doorstep</h4>
+              <div class="listing-meta"><span>⌖ Main Gate</span><span>Water delivery</span></div>
+              <div class="listing-bottom"><strong>KSh 100</strong><span class="rating">★ 4.9 <small>(8)</small></span></div>
+              <a class="whatsapp-button" target="_blank" rel="noopener noreferrer" data-whatsapp href="https://wa.me/?text=Hi%2C%20I%20saw%20your%2020L%20water%20refill%20on%20ComradeSoko."><span>☏</span> Order on WhatsApp</a>
+            </div>
+          </article>
+          <article class="listing-card" data-category="groceries" data-search="fruit groceries avocado banana tomato vegetables jogoo kisii" data-campus="kisii university" data-area="jogoo" data-seller="Fresh Finds by Akinyi" data-product="fruit and veg bundles">
+            <div class="listing-image image-groceries"><span class="image-badge">DEMO LISTING</span><span class="listing-emoji">🍎</span></div>
+            <div class="listing-details">
+              <div class="seller-line"><span class="seller-avatar avatar-green">A</span><span>Fresh Finds by Akinyi</span><span class="demo-badge">SAMPLE</span></div>
+              <h4>Fresh fruit &amp; veg bundles</h4>
+              <div class="listing-meta"><span>⌖ Jogoo</span><span>Fruits &amp; groceries</span></div>
+              <div class="listing-bottom"><strong>From KSh 150</strong><span class="rating">★ 4.7 <small>(15)</small></span></div>
+              <a class="whatsapp-button" target="_blank" rel="noopener noreferrer" data-whatsapp href="https://wa.me/?text=Hi%2C%20I%20saw%20your%20fruit%20and%20veg%20bundles%20on%20ComradeSoko."><span>☏</span> Order on WhatsApp</a>
+            </div>
+          </article>
+          <article class="listing-card" data-category="food" data-search="chapati beans food lunch meals cake kisii" data-campus="kisii university" data-area="behind main gate" data-seller="Mama T's Kitchen" data-product="chapati and beans">
+            <div class="listing-image image-food"><span class="image-badge">DEMO LISTING</span><span class="listing-emoji">🍛</span></div>
+            <div class="listing-details">
+              <div class="seller-line"><span class="seller-avatar avatar-peach">T</span><span>Mama T's Kitchen</span><span class="demo-badge">SAMPLE</span></div>
+              <h4>Chapati &amp; beans, made fresh</h4>
+              <div class="listing-meta"><span>⌖ Behind Main Gate</span><span>Food &amp; cake</span></div>
+              <div class="listing-bottom"><strong>KSh 100</strong><span class="rating">★ 4.9 <small>(23)</small></span></div>
+              <a class="whatsapp-button" target="_blank" rel="noopener noreferrer" data-whatsapp href="https://wa.me/?text=Hi%2C%20I%20saw%20your%20chapati%20and%20beans%20on%20ComradeSoko."><span>☏</span> Order on WhatsApp</a>
+            </div>
+          </article>
+          <article class="listing-card" data-category="clothes" data-search="clothes shoes thrift fashion sneakers kisii" data-campus="kisii university" data-area="manyatta" data-seller="Rewear Studio" data-product="thrifted clothes and shoes">
+            <div class="listing-image image-clothes"><span class="image-badge">DEMO LISTING</span><span class="listing-emoji">👕</span></div>
+            <div class="listing-details">
+              <div class="seller-line"><span class="seller-avatar avatar-lilac">R</span><span>Rewear Studio</span><span class="demo-badge">SAMPLE</span></div>
+              <h4>Pre-loved fits, fresh finds</h4>
+              <div class="listing-meta"><span>⌖ Manyatta</span><span>Clothes &amp; shoes</span></div>
+              <div class="listing-bottom"><strong>From KSh 350</strong><span class="rating">★ 4.6 <small>(9)</small></span></div>
+              <a class="whatsapp-button" target="_blank" rel="noopener noreferrer" data-whatsapp href="https://wa.me/?text=Hi%2C%20I%20saw%20your%20thrifted%20clothes%20and%20shoes%20on%20ComradeSoko."><span>☏</span> Order on WhatsApp</a>
+            </div>
+          </article>
+          <article class="listing-card" data-category="beauty" data-search="barber haircut braids hair salon beauty egerton" data-campus="egerton university" data-area="town" data-seller="Fresh Cut by Kev" data-product="haircuts and grooming">
+            <div class="listing-image image-beauty"><span class="image-badge">DEMO LISTING</span><span class="listing-emoji">💈</span></div>
+            <div class="listing-details">
+              <div class="seller-line"><span class="seller-avatar avatar-blue">K</span><span>Fresh Cut by Kev</span><span class="demo-badge">SAMPLE</span></div>
+              <h4>Fresh cuts, right by campus</h4>
+              <div class="listing-meta"><span>⌖ Town</span><span>Barber &amp; hair</span></div>
+              <div class="listing-bottom"><strong>From KSh 200</strong><span class="rating">★ 4.8 <small>(18)</small></span></div>
+              <a class="whatsapp-button" target="_blank" rel="noopener noreferrer" data-whatsapp href="https://wa.me/?text=Hi%2C%20I%20saw%20your%20haircuts%20and%20grooming%20on%20ComradeSoko."><span>☏</span> Order on WhatsApp</a>
+            </div>
+          </article>
+          <article class="listing-card" data-category="tech" data-search="developer websites web design tech websites maseno" data-campus="maseno university" data-area="main gate" data-seller="Brian Builds" data-product="website design">
+            <div class="listing-image image-tech"><span class="image-badge">DEMO LISTING</span><span class="listing-emoji">💻</span></div>
+            <div class="listing-details">
+              <div class="seller-line"><span class="seller-avatar avatar-green">B</span><span>Brian Builds</span><span class="demo-badge">SAMPLE</span></div>
+              <h4>Websites for your next big idea</h4>
+              <div class="listing-meta"><span>⌖ Main Gate</span><span>Developers &amp; techies</span></div>
+              <div class="listing-bottom"><strong>From KSh 2,000</strong><span class="rating">★ 5.0 <small>(6)</small></span></div>
+              <a class="whatsapp-button" target="_blank" rel="noopener noreferrer" data-whatsapp href="https://wa.me/?text=Hi%2C%20I%20saw%20your%20website%20design%20service%20on%20ComradeSoko."><span>☏</span> Order on WhatsApp</a>
+            </div>
+          </article>
+          <article class="listing-card" data-category="services" data-search="laundry washing clothes cleaning service jkuat" data-campus="jkuat" data-area="jogoo" data-seller="WashDay Campus" data-product="laundry service">
+            <div class="listing-image image-services"><span class="image-badge">DEMO LISTING</span><span class="listing-emoji">🧺</span></div>
+            <div class="listing-details">
+              <div class="seller-line"><span class="seller-avatar avatar-yellow">W</span><span>WashDay Campus</span><span class="demo-badge">SAMPLE</span></div>
+              <h4>Fresh laundry, more free time</h4>
+              <div class="listing-meta"><span>⌖ Jogoo</span><span>Other services</span></div>
+              <div class="listing-bottom"><strong>From KSh 100</strong><span class="rating">★ 4.7 <small>(11)</small></span></div>
+              <a class="whatsapp-button" target="_blank" rel="noopener noreferrer" data-whatsapp href="https://wa.me/?text=Hi%2C%20I%20saw%20your%20laundry%20service%20on%20ComradeSoko."><span>☏</span> Order on WhatsApp</a>
+            </div>
+          </article>
+          <article class="listing-card" data-category="tech" data-search="graphics design posters branding masinde muliro" data-campus="masinde muliro university" data-area="main gate" data-seller="Auma Creative Lab" data-product="graphics and branding">
+            <div class="listing-image image-design"><span class="image-badge">SAMPLE LISTING</span><span class="listing-emoji">🎨</span></div>
+            <div class="listing-details">
+              <div class="seller-line"><span class="seller-avatar avatar-lilac">A</span><span>Auma Creative Lab</span><span class="demo-badge">SAMPLE</span></div>
+              <h4>Designs for your next big idea</h4>
+              <div class="listing-meta"><span>⌖ Main Gate</span><span>Developers &amp; techies</span></div>
+              <div class="listing-bottom"><strong>From KSh 500</strong><span class="rating">★ 4.8 <small>(7)</small></span></div>
+              <a class="whatsapp-button" target="_blank" rel="noopener noreferrer" data-whatsapp href="https://wa.me/?text=Hi%2C%20I%20saw%20your%20graphics%20and%20branding%20on%20ComradeSoko."><span>☏</span> Order on WhatsApp</a>
+            </div>
+          </article>
+          <article class="listing-card" data-category="food" data-search="fruit salad snacks food delivery kisumu great lakes university of kisumu" data-campus="great lakes university of kisumu" data-area="manyatta" data-seller="Lakeview Fresh Bites" data-product="fruit salad cups">
+            <div class="listing-image image-groceries"><span class="image-badge">SAMPLE LISTING</span><span class="listing-emoji">🍓</span></div>
+            <div class="listing-details">
+              <div class="seller-line"><span class="seller-avatar avatar-peach">L</span><span>Lakeview Fresh Bites</span><span class="demo-badge">SAMPLE</span></div>
+              <h4>Fresh fruit cups for study breaks</h4>
+              <div class="listing-meta"><span>⌖ Manyatta</span><span>Food &amp; cake</span></div>
+              <div class="listing-bottom"><strong>From KSh 100</strong><span class="rating">★ 4.7 <small>(10)</small></span></div>
+              <a class="whatsapp-button" target="_blank" rel="noopener noreferrer" data-whatsapp href="https://wa.me/?text=Hi%2C%20I%20saw%20your%20fruit%20salad%20cups%20on%20ComradeSoko."><span>☏</span> Order on WhatsApp</a>
+            </div>
+          </article>
+        </div>
+        <div class="empty-state" id="empty-state" hidden>
+          <span aria-hidden="true">⌕</span>
+          <strong id="empty-title">Choose your institution to get started</strong>
+          <p id="empty-description">Your soko is local. Select a campus above and discover what’s around you.</p>
+        </div>
+        <section class="connections-section" id="connections" hidden aria-labelledby="connections-title">
+          <div class="listings-heading">
+            <div>
+              <h3 id="connections-title">Comrades around your campus <span class="heading-sparkle">✳</span></h3>
+              <p>Meet people nearby with complementary skills and interests.</p>
+            </div>
+            <span class="listing-count">CAMPUS CONNECTIONS</span>
+          </div>
+          <div class="connections-grid" id="connections-grid"></div>
+        </section>
+        <p class="demo-note">Prototype preview: sample sellers, prices and ratings are for demonstration only.</p>
+      </section>
+
+      <section class="housing-section" id="house-hunting">
+        <div class="section-heading housing-heading">
+          <div>
+            <div class="eyebrow section-eyebrow">A PLACE TO CALL YOUR OWN</div>
+            <h2>House hunting, made easier.</h2>
+            <p id="housing-status" aria-live="polite">Choose your institution above to see vacant rooms near campus.</p>
+          </div>
+          <span class="listing-count" id="room-count">00 ROOMS</span>
+        </div>
+        <div class="housing-toolbar">
+          <span>Vacant rooms around your selected institution</span>
+          <label for="room-budget">Monthly rent
+            <select id="room-budget" disabled>
+              <option value="">Any budget</option>
+              <option value="5000">Up to KSh 5,000</option>
+              <option value="8000">Up to KSh 8,000</option>
+              <option value="12000">Up to KSh 12,000</option>
+              <option value="20000">Up to KSh 20,000</option>
+            </select>
+          </label>
+        </div>
+        <div class="room-grid" id="room-grid" aria-live="polite"></div>
+        <div class="empty-state room-empty" id="room-empty" hidden>
+          <span aria-hidden="true">⌂</span>
+          <strong id="room-empty-title">Choose your institution to start house hunting</strong>
+          <p id="room-empty-description">Room listings only appear for the campus you select.</p>
+        </div>
+        <p class="demo-note">Room listings shown are sample data for the prototype. Confirm availability, rent, deposit, and viewing arrangements with the property contact.</p>
+      </section>
+
+      <section class="partner-section" id="campus-partners">
+        <div class="partner-copy">
+          <span class="partner-icon" aria-hidden="true">⌂</span>
+          <div>
+            <div class="eyebrow">FOR THE NEIGHBOURHOOD AROUND CAMPUS</div>
+            <h2>Not a comrade? Your business still belongs here.</h2>
+            <p>Local shops, landlords, salons, gas and water vendors, and delivery providers can join as campus partners. Choose the institution and area you serve, then list your services for nearby students.</p>
+          </div>
+        </div>
+        <button class="button button-dark partner-cta" id="partner-join-button" type="button">Join as a local provider <span aria-hidden="true">↗</span></button>
+        <p class="partner-note">Partner profile in this prototype is stored only in this browser. It is not a verified business login.</p>
+      </section>
+
+      <section class="workspace-section" id="developers-hub">
+        <div class="section-heading workspace-heading">
+          <div><div class="eyebrow section-eyebrow">SKILLS, IDEAS &amp; COLLABORATION</div><h2>Comrades build together.</h2></div>
+          <span class="listing-count">YOUR INSTITUTION ONLY</span>
+        </div>
+        <div class="workspace-grid">
+          <form class="panel-form" id="hub-post-form">
+            <h3>Share an idea or skill</h3>
+            <p>Find a collaborator, client, or fellow maker on your campus.</p>
+            <label>Your post<textarea id="hub-post-content" maxlength="280" placeholder="I’m Brian, I build websites for KSh 2,000 — Kisii University..." required></textarea></label>
+            <label>What’s this about?
+              <select id="hub-post-kind"><option>Offering a skill</option><option>Looking to collaborate</option><option>Sharing an idea</option></select>
+            </label>
+            <button class="button button-dark" type="submit">Post to campus hub <span>↗</span></button>
+            <p class="form-hint" id="hub-form-hint">Choose your institution and join to post.</p>
+          </form>
+          <div class="hub-feed">
+            <div class="feed-heading"><h3>Campus noticeboard</h3><span class="feed-live"><i></i> LOCAL FEED</span></div>
+            <div id="hub-feed-list" class="hub-feed-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="workspace-section dashboard-section" id="dashboard">
+        <div class="section-heading workspace-heading">
+          <div><div class="eyebrow section-eyebrow">YOUR COMRADESOKO</div><h2 id="dashboard-title">Your dashboard.</h2></div>
+          <span class="demo-note-inline">Saved in this browser only</span>
+        </div>
+        <div id="dashboard-content" class="dashboard-content"></div>
+      </section>
+
+      <section class="workspace-section admin-section" id="admin-panel">
+        <div class="admin-notice"><span>ⓘ</span><div><strong>Admin &amp; trust tools — prototype preview</strong><p>Reports and moderation controls require a secure, shared backend before public launch.</p></div><span class="listing-count">NOT PRODUCTION SECURE</span></div>
+      </section>
+
+      <section class="join-banner" id="join">
+        <div class="join-spark" aria-hidden="true">✳</div>
+        <div>
+          <p class="eyebrow">YOUR HUSTLE BELONGS HERE</p>
+          <h2>Got something good going?</h2>
+          <p>Put your hustle on the map. Your next customer might be just around the lecture hall.</p>
+        </div>
+        <a class="button button-dark join-button" href="mailto:hello@comradesoko.co.ke?subject=List%20my%20hustle">Let's get you listed <span aria-hidden="true">↗</span></a>
+      </section>
+
+      <section class="how-section" id="how-it-works">
+        <div class="eyebrow section-eyebrow">EASY AS CAMPUS LIFE SHOULD BE</div>
+        <h2>Find it. Link up. Get it.</h2>
+        <div class="how-grid">
+          <div><span class="step-number">01</span><h3>Find your thing</h3><p>Search by what you need or explore what your campus has to offer.</p></div>
+          <div><span class="step-number">02</span><h3>Meet your maker</h3><p>Discover the student behind the hustle and reach out directly.</p></div>
+          <div><span class="step-number">03</span><h3>Keep it on campus</h3><p>Support a local hustle and make campus life a little better.</p></div>
+        </div>
+      </section>
+
+      <section class="policy-section" id="policies">
+        <div class="section-heading policy-heading">
+          <div><div class="eyebrow section-eyebrow">SAFETY, PRIVACY &amp; FAIR DEALING</div><h2>Community policies.</h2></div>
+          <span class="listing-count">DRAFT FOR LEGAL REVIEW</span>
+        </div>
+        <p class="policy-disclosure"><strong>Important:</strong> These are proposed launch policies, not a legal agreement. ComradeSoko is currently a browser-only prototype. It does not verify people, process payments, collect identity documents, operate subscriptions, or provide a staffed 24-hour dispute service. Have a Kenyan lawyer review these terms before using them for a public launch.</p>
+
+        <details class="policy-card" id="terms-of-use">
+          <summary>Who we are, how the marketplace works &amp; community rules</summary>
+          <div class="policy-copy">
+            <h3>Who we are</h3>
+            <p>ComradeSoko — “Soko la Comrades na Majirani” — is intended to link Comrade Sellers (students), Local Providers / Jirani Sellers (nearby businesses), and buyers around Kenyan institutions. We introduce buyers and sellers; we do not own or sell listed goods.</p>
+            <p>Proposed account pricing: Buyers join free; Comrade Sellers join free with a limit of 20 products; Local Providers receive a 30-day free trial before the proposed monthly plans. No fees or subscriptions are collected by this prototype.</p>
+            <h3>Direct transactions</h3>
+            <p>Buyers and sellers arrange orders directly, currently through WhatsApp. ComradeSoko does not currently handle goods, delivery, payments, or escrow. M-Pesa Direct and cash on delivery are arrangements between buyer and seller; M-Pesa transaction charges are the buyer’s responsibility unless agreed otherwise. Future escrow fees, if introduced, are proposed at 2% for Comrade Sellers and 4% for Jirani Providers and will require separate terms. Marketplace listings and contact links are demonstration data in this prototype.</p>
+            <p>Our proposed terms do not replace rights or responsibilities that apply under Kenyan law. Any limitation of liability is subject to applicable law and legal review; please resolve delivery timing, quality, availability, and payment details directly with the seller before ordering.</p>
+            <h3>Eligibility and prohibited listings</h3>
+            <p>Proposed launch rules: users must be at least 18, use their real name and phone number, and post genuine photos. Do not list drugs, weapons, stolen goods, exam leakages, adult content, or other unlawful or harmful items. The prototype cannot verify age, identity, phone ownership, listing ownership, or whether a report is true.</p>
+            <p>Two verified scam reports are intended to trigger a permanent ban and phone-number blacklist after a fair review. Reporting, verification, banning, and blacklisting are not active in this prototype. Fake or abusive reviews may be removed through a future moderation process. Reviews cannot be deleted by their author under the proposed policy; applicable legal rights and moderation decisions still apply.</p>
+            <p>These proposed terms are intended to be governed by the laws of Kenya, with Kisumu or Kisii courts as the proposed venue, subject to legal review and mandatory venue rules.</p>
+          </div>
+        </details>
+
+        <details class="policy-card" id="privacy-policy">
+          <summary>Privacy policy</summary>
+          <div class="policy-copy">
+            <h3>Prototype data and proposed collection</h3>
+            <p>This prototype stores profile details, listings, photos, reviews, and other demo activity in this browser’s local storage. It does not send them to ComradeSoko or encrypt them as a server would. Avoid entering real personal, payment, or identity information here.</p>
+            <p>For a future service, the proposed data may include name, phone, institution and area, shop photos, and an identity document from Local Providers for verification only. Identity documents are not collected by this prototype. A production system must implement secure, encrypted storage and access controls before collecting them.</p>
+            <h3>Use, access and deletion</h3>
+            <p>In a future service, profile and shop information would be used to show relevant listings and facilitate order alerts. Provider identity documents would be restricted to authorized administrators and never shown to buyers; buyers would see the business name and contact phone. We do not intend to sell personal data or collect M-Pesa PINs.</p>
+            <p>Server-side account deletion within seven days after a WhatsApp request is a proposed service commitment, not an available prototype feature. For this local demo, use “Clear local profile” in the dashboard and clear this site’s browser data to remove locally stored prototype information. Support: <a href="https://wa.me/254764658897?text=Delete%20my%20account" target="_blank" rel="noopener noreferrer">WhatsApp “Delete my account”</a>.</p>
+          </div>
+        </details>
+
+        <details class="policy-card" id="seller-policy">
+          <summary>Seller policy: Comrade Sellers &amp; Jirani Providers</summary>
+          <div class="policy-copy">
+            <h3>Comrade Sellers (students)</h3>
+            <ul>
+              <li>Must be a student at the institution where they sell and may be asked to provide a student ID after secure verification is available.</li>
+              <li>Use real product photos, mark stock out when sold, and deliver as promised.</li>
+              <li>The proposed free account limit is 20 products. The prototype does not securely enforce account limits.</li>
+            </ul>
+            <h3>Local Providers / Jirani Soko (town businesses)</h3>
+            <ul>
+              <li>Business or delivery service must be within 5 km of each campus served. Location is not verified by this prototype.</li>
+              <li>Future verification is planned to require a shop-front photo, owner ID, and M-Pesa Till. Do not send ID documents through this prototype; secure verification is not available yet.</li>
+              <li>Keep prices fair and within 15% of the local town average, with no exam-season price hikes. State delivery fees and times clearly, for example “KES 100 to Manyatta, 45 mins,” and keep open/closed status current.</li>
+              <li>Proposed pricing: 30 days free, then KES 199/month Starter for up to 3 institutions or KES 499/month Pro for all institutions and homepage featuring. Subscriptions, plans, and featured placement are not active.</li>
+              <li>Three confirmed delivery failures are intended to trigger a downgrade after review. That process is not active in this prototype.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="policy-card" id="buyer-policy">
+          <summary>Buyer policy &amp; support</summary>
+          <div class="policy-copy">
+            <ul>
+              <li>For delivery orders, order only when you have money and are at your hostel or agreed delivery location.</li>
+              <li>Check gas or water before the rider leaves. If you are absent, pay the rider’s agreed return fare.</li>
+              <li>Leave an honest review and report suspected scams to <a href="https://wa.me/254764658897?text=Hi%20ComradeSoko%20Support%2C%20I%20want%20to%20report%20a%20possible%20scam." target="_blank" rel="noopener noreferrer">WhatsApp support</a> with relevant screenshots and payment reference. Do not post sensitive payment or identity details publicly.</li>
+            </ul>
+            <p>Support and dispute mediation within 24 hours are planned service targets, not guaranteed or currently staffed service levels. Contact support Monday–Saturday, 8 AM–7 PM, for the proposed operating hours.</p>
+          </div>
+        </details>
+
+        <details class="policy-card" id="provider-agreement">
+          <summary>Local Provider agreement (proposed)</summary>
+          <div class="policy-copy">
+            <p>By registering as a Jirani Provider, I confirm that my business is legal and within 5 km of the schools I serve; my prices are fair to comrades; and I will deliver on time or communicate delays. I understand the proposed 30-day free period and subscription fees required to remain verified after that period.</p>
+            <p>I understand that shop photos may be used by ComradeSoko for TikTok marketing only under the proposed provider agreement. Two verified scam reports may result in a permanent ban and phone-number blacklist after review. Verification, subscriptions, marketing use, reporting, and digital signatures are not active in this browser prototype.</p>
+            <p><strong>Digital signature:</strong> a required checkbox is shown in the local-provider profile form as a prototype acknowledgement only. This browser cannot securely capture or retain a legally reliable signature.</p>
+          </div>
+        </details>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <a class="brand footer-brand" href="#" aria-label="ComradeSoko home"><span class="brand-mark" aria-hidden="true">c.</span><span>comrade<span class="brand-accent">soko</span></span></a>
+      <p>ComradeSoko Support · Mon–Sat 8AM–7PM<br>Serving Kisii, Egerton, Maseno, MMUST and institutions across Kenya.</p>
+      <div class="footer-contacts">
+      <a class="footer-support" href="https://wa.me/254764658897?text=Hi%20ComradeSoko%20Support%2C%20I%20need%20help." target="_blank" rel="noopener noreferrer">
+        <span class="support-icon" aria-hidden="true">☏</span>
+        <span><strong>WhatsApp support</strong><small>+254 764 658 897</small></span>
+      </a>
+      <a class="footer-support" href="tel:+254113026653">
+        <span class="support-icon" aria-hidden="true">☎</span>
+        <span><strong>Verification &amp; business</strong><small>Call +254 113 026 653</small></span>
+      </a>
+      </div>
+      <nav class="footer-policies" aria-label="Community policies">
+        <a href="#terms-of-use">Terms</a>
+        <a href="#privacy-policy">Privacy</a>
+        <a href="#seller-policy">Seller policy</a>
+        <a href="#buyer-policy">Buyer policy</a>
+      </nav>
+      <span class="footer-location">Kenya <span aria-hidden="true">✳</span></span>
+      <small>© 2026 ComradeSoko. Good finds, close to campus.</small>
+    </footer>
+
+    <dialog class="app-dialog" id="account-dialog">
+      <form class="dialog-content" id="account-form">
+        <button class="dialog-close" type="button" data-close aria-label="Close">×</button>
+        <div class="eyebrow section-eyebrow">JOIN YOUR CAMPUS SOKO</div>
+        <h2 id="account-dialog-title">Create your local profile.</h2>
+        <p class="dialog-description">Prototype profile only: details stay in this browser and are not sent to a server.</p>
+        <label>Your name<input id="profile-name" required maxlength="50" autocomplete="name"></label>
+        <label>I’m here as
+          <select id="profile-role"><option value="buyer">Buyer / comrade</option><option value="seller">Student seller / business owner</option><option value="developer">Developer / creative</option><option value="local-provider">Local seller or service provider (not a student)</option></select>
+        </label>
+        <label id="shop-name-field" hidden>Business or shop name<input id="profile-shop-name" maxlength="60" placeholder="e.g. Mama T’s Kitchen"></label>
+        <label>Institution
+          <select id="profile-campus" required>
+            <option value="">Choose institution</option>
+          </select>
+        </label>
+        <label><span id="profile-area-label">Campus area</span><input id="profile-area" required maxlength="50" placeholder="e.g. Manyatta, Main Gate"></label>
+        <label>WhatsApp number <span class="optional-label">Optional</span><input id="profile-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="e.g. 0712 345 678"></label>
+        <label id="provider-agreement-field" class="agreement-field" hidden><span class="agreement-checkbox"><input id="provider-agreement-check" type="checkbox"> I acknowledge the <a href="#provider-agreement" target="_blank">proposed Local Provider agreement</a>. This is not a legally recorded e-signature.</span></label>
+        <button class="button button-dark dialog-submit" type="submit">Save local profile <span>↗</span></button>
+        <p class="form-hint" id="account-form-hint"></p>
+      </form>
+    </dialog>
+
+    <dialog class="app-dialog" id="seller-dialog">
+      <div class="dialog-content seller-profile-content">
+        <button class="dialog-close" type="button" data-close aria-label="Close">×</button>
+        <div id="seller-profile-body"></div>
+      </div>
+    </dialog>
+
+    <dialog class="app-dialog" id="review-dialog">
+      <form class="dialog-content" id="review-form">
+        <button class="dialog-close" type="button" data-close aria-label="Close">×</button>
+        <div class="eyebrow section-eyebrow">COMRADE TRUST</div>
+        <h2>Leave a seller review.</h2>
+        <p class="dialog-description" id="review-seller-name"></p>
+        <label>Your rating
+          <select id="review-rating" required><option value="5">★★★★★ — Great</option><option value="4">★★★★☆ — Good</option><option value="3">★★★☆☆ — Okay</option><option value="2">★★☆☆☆ — Not great</option><option value="1">★☆☆☆☆ — Poor</option></select>
+        </label>
+        <label>Your comment<textarea id="review-comment" maxlength="300" required placeholder="Share a helpful, honest review"></textarea></label>
+        <p class="form-hint">Prototype reviews are local to this browser and are not verified purchases.</p>
+        <button class="button button-dark dialog-submit" type="submit">Save review</button>
+      </form>
+    </dialog>
+
+    <dialog class="app-dialog" id="product-dialog">
+      <form class="dialog-content" id="product-form">
+        <button class="dialog-close" type="button" data-close aria-label="Close">×</button>
+        <div class="eyebrow section-eyebrow">SELLER WORKSPACE</div>
+        <h2>Add a campus product.</h2>
+        <p class="dialog-description">Your listing is tagged to the institution on your local profile.</p>
+        <label>Category
+          <select id="product-category" required>
+            <option value="gas">Gas delivery</option><option value="water">Water delivery</option><option value="groceries">Fruits &amp; groceries</option><option value="food">Food &amp; cake</option><option value="clothes">Clothes &amp; shoes</option><option value="beauty">Barber &amp; hair</option><option value="tech">Developers &amp; techies</option><option value="services">Other services</option>
+          </select>
+        </label>
+        <label>Product or service name<input id="product-name" required maxlength="70" placeholder="e.g. 13kg gas refill"></label>
+        <div class="form-row"><label>Price (KSh)<input id="product-price" type="number" min="1" step="1" required></label><label>Campus area<input id="product-area" required maxlength="50" placeholder="Main Gate"></label></div>
+        <label>Photos <span class="optional-label">Up to 3, compressed in this browser</span><input id="product-photos" type="file" accept="image/*" multiple></label>
+        <div id="delivery-fields" class="conditional-fields" hidden><div class="form-row"><label>Delivery fee (KSh)<input id="delivery-fee" type="number" min="0" step="1"></label><label>Estimated delivery (minutes)<input id="delivery-time" type="number" min="1" value="30"></label></div><label>Stock available<input id="product-stock" type="number" min="0" step="1"></label></div>
+        <label id="menu-field" hidden>Today’s menu<input id="product-menu" maxlength="120" placeholder="e.g. Chapati, beans, pilau"></label>
+        <button class="button button-dark dialog-submit" type="submit">Publish sample listing</button>
+        <p class="form-hint">Prototype listings are visible only on this browser.</p>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
