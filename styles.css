@@ -781,3 +781,173 @@ h1 span { color: #4d933b; background: linear-gradient(100deg, #307745, #7faa42 7
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
+
+/* Modern browsing refresh */
+:root {
+  --ink: #17251d;
+  --muted: #68766d;
+  --green: #c7f078;
+  --deep-green: #174b36;
+  --line: #e1e8dd;
+  --paper: #f5f7f1;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 8% 4%, rgba(194, 226, 164, .3), transparent 30rem),
+    radial-gradient(ellipse at 94% 36%, rgba(250, 220, 158, .17), transparent 34rem),
+    var(--paper);
+}
+
+body::before {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background-image:
+    url("assets/campus-graduation.png"),
+    url("assets/campus-hustle.png");
+  background-position:
+    left center,
+    right center;
+  background-repeat: no-repeat;
+  background-size:
+    min(24vw, 310px) auto,
+    min(24vw, 310px) auto;
+  opacity: .12;
+}
+
+.site-header {
+  border-bottom-color: rgba(23, 51, 37, .1);
+  background: rgba(249, 251, 247, .84);
+  box-shadow: 0 5px 24px rgba(29, 51, 34, .035);
+}
+
+.header-inner, .hero, .market-section, .join-banner, .how-section, .site-footer, .workspace-section, .housing-section, .partner-section, .policy-section {
+  width: min(1200px, calc(100% - 64px));
+}
+
+.hero::before {
+  top: 96px;
+  bottom: 20px;
+  height: auto;
+  border: 1px solid rgba(208, 225, 198, .68);
+  border-radius: 32px;
+  background:
+    radial-gradient(ellipse at 77% 20%, rgba(238, 204, 129, .24), transparent 34%),
+    radial-gradient(ellipse at 19% 76%, rgba(194, 225, 175, .38), transparent 52%),
+    linear-gradient(125deg, rgba(255,255,255,.9), rgba(239,247,233,.8) 60%, rgba(251,247,235,.72));
+  transform: none;
+}
+
+.institution-prompt, .search-bar {
+  border-color: rgba(212, 225, 207, .9);
+  box-shadow: 0 14px 38px rgba(35, 62, 40, .09);
+}
+
+.institution-prompt { border-radius: 18px; }
+.search-bar { border-radius: 17px; }
+.button { border-radius: 12px; }
+.button-dark { background: linear-gradient(135deg, #193c2c, #24533a); }
+.button-green { background: linear-gradient(135deg, #d8f69f, #bde879); }
+.search-button:hover, .header-cta:hover, .join-button:hover { box-shadow: 0 10px 24px rgba(44, 91, 48, .16); }
+
+.market-section { border-top-color: rgba(24, 48, 34, .1); }
+.category-grid { gap: 13px; }
+.category-tile {
+  min-height: 82px;
+  border-color: #e4eae0;
+  border-radius: 16px;
+  background: rgba(255,255,255,.86);
+  box-shadow: 0 7px 20px rgba(34, 55, 39, .04);
+}
+.category-tile:hover { transform: translateY(-4px); }
+.category-tile.selected {
+  border-color: #244c35;
+  background: linear-gradient(135deg, #1b3c2b, #28553a);
+  box-shadow: 0 12px 24px rgba(31, 71, 43, .17);
+}
+.category-icon { border-radius: 12px; }
+
+.listing-card, .connection-card, .room-card, .panel-form, .hub-feed, .inbox-layout, .dashboard-content {
+  border-radius: 18px;
+  box-shadow: 0 9px 28px rgba(35, 49, 37, .055);
+}
+.listing-card { border-color: #e3e9df; }
+.listing-card:hover { transform: translateY(-5px); box-shadow: 0 18px 38px rgba(35, 49, 37, .13); }
+.listing-image { min-height: 174px; }
+.listing-details { padding: 15px 15px 14px; }
+.whatsapp-button { min-height: 39px; border-radius: 10px; }
+.connection-card { border-color: #e3e9df; background: rgba(255,255,255,.88); }
+.connection-action { min-height: 38px; border-radius: 9px; }
+.workspace-section, .housing-section { scroll-margin-top: 94px; }
+.workspace-heading h2, .housing-heading h2 { letter-spacing: -1.1px; }
+.panel-form, .hub-feed, .inbox-layout, .dashboard-content { border-color: #e4eae0; }
+.app-dialog { border-radius: 20px; }
+
+.mobile-dock { display: none; }
+
+@media (max-width: 850px) {
+  .header-inner, .hero, .market-section, .join-banner, .how-section, .site-footer, .workspace-section, .housing-section, .partner-section, .policy-section {
+    width: min(calc(100% - 42px), 720px);
+  }
+}
+
+@media (max-width: 600px) {
+  html { scroll-padding-top: 78px; }
+  body { padding-bottom: calc(78px + env(safe-area-inset-bottom)); }
+  .site-header { height: 64px; }
+  .header-inner, .hero, .market-section, .join-banner, .how-section, .site-footer, .workspace-section, .housing-section, .partner-section, .policy-section {
+    width: calc(100% - 32px);
+  }
+  .hero { padding-top: 18px; }
+  .hero::before { top: 76px; bottom: 16px; border-radius: 24px; }
+  body::before {
+    background-size: 46vw auto, 46vw auto;
+    opacity: .1;
+  }
+  .hero-copy > .eyebrow { font-size: 8px; letter-spacing: 1.1px; }
+  .hero-description { line-height: 1.75; }
+  .category-tile { min-height: 68px; border-radius: 13px; }
+  .listing-grid { gap: 11px; }
+  .listing-card { border-radius: 15px; }
+  .listing-image { min-height: 126px; }
+  .listing-details { padding: 10px 9px; }
+  .whatsapp-button { min-height: 35px; }
+  .mobile-dock {
+    position: fixed;
+    z-index: 15;
+    right: 12px;
+    bottom: calc(8px + env(safe-area-inset-bottom));
+    left: 12px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px;
+    padding: 7px;
+    border: 1px solid rgba(223, 232, 218, .9);
+    border-radius: 19px;
+    background: rgba(250, 252, 248, .93);
+    box-shadow: 0 12px 34px rgba(25, 45, 29, .17);
+    backdrop-filter: blur(18px);
+  }
+  .mobile-dock-link {
+    min-height: 49px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    border-radius: 13px;
+    color: #718076;
+    transition: color .18s, background .18s, transform .18s;
+  }
+  .mobile-dock-link > span { font-size: 20px; line-height: 1; }
+  .mobile-dock-link small { font-size: 9px; font-weight: 700; }
+  .mobile-dock-link[aria-current="page"] {
+    color: #214c34;
+    background: #eaf4e3;
+  }
+  .mobile-dock-link:active { transform: scale(.96); }
+  .toast { bottom: calc(72px + env(safe-area-inset-bottom)); }
+}

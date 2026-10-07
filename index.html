@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#f7f8f2">
+    <meta name="theme-color" content="#f5f7f1">
     <meta
       name="description"
       content="Soko la Comrades na Majirani: discover student sellers and local providers for gas, water, food, groceries, rooms, and services around Kenyan campuses."
@@ -15,10 +15,10 @@
       href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     >
-    <link rel="stylesheet" href="styles.css?v=campus-glow">
+    <link rel="stylesheet" href="styles.css?v=modern-soko">
     <script src="institutions.js" defer></script>
     <script src="tvet-institutions.js" defer></script>
-    <script src="script.js?v=escrow-preview" defer></script>
+    <script src="script.js?v=modern-soko" defer></script>
     <script type="module" src="firebase-auth.js"></script>
   </head>
   <body>
@@ -564,6 +564,20 @@
       </form>
     </dialog>
 
+    <nav class="mobile-dock" id="mobile-dock" aria-label="Quick navigation">
+      <a class="mobile-dock-link" href="#discover" aria-current="page">
+        <span aria-hidden="true">⌕</span><small>Discover</small>
+      </a>
+      <a class="mobile-dock-link" href="#house-hunting">
+        <span aria-hidden="true">⌂</span><small>Rooms</small>
+      </a>
+      <a class="mobile-dock-link" href="#developers-hub">
+        <span aria-hidden="true">✳</span><small>Comrades</small>
+      </a>
+      <a class="mobile-dock-link" href="#inbox">
+        <span aria-hidden="true">✉</span><small>Inbox</small>
+      </a>
+    </nav>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
   </body>
 </html>

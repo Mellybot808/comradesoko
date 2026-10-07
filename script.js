@@ -1988,6 +1988,40 @@ $$("dialog").forEach((dialog) => dialog.addEventListener("click", (event) => {
   if (event.target === dialog) dialog.close();
 }));
 
+const mobileDockLinks = $$(".mobile-dock-link");
+const dockSections = mobileDockLinks
+  .map((link) => $(link.getAttribute("href")))
+  .filter(Boolean);
+
+function setCurrentDockSection(sectionId) {
+  for (const link of mobileDockLinks) {
+    const isCurrent = link.hash === `#${sectionId}`;
+    if (isCurrent) link.setAttribute("aria-current", "page");
+    else link.removeAttribute("aria-current");
+  }
+}
+
+mobileDockLinks.forEach((link) => link.addEventListener("click", () => {
+  setCurrentDockSection(link.hash.slice(1));
+}));
+
+let dockUpdateScheduled = false;
+function updateDockForScroll() {
+  dockUpdateScheduled = false;
+  const activeLine = window.innerHeight * 0.38;
+  const visibleSections = dockSections.filter((section) => section.getBoundingClientRect().top <= activeLine);
+  const currentSection = visibleSections[visibleSections.length - 1];
+  if (currentSection) setCurrentDockSection(currentSection.id);
+}
+
+window.addEventListener("scroll", () => {
+  if (dockUpdateScheduled) return;
+  dockUpdateScheduled = true;
+  window.requestAnimationFrame(updateDockForScroll);
+}, { passive: true });
+window.addEventListener("resize", updateDockForScroll);
+updateDockForScroll();
+
 $("#profile-campus").addEventListener("change", () => {
   if ($("#profile-campus").value === "request-institution") {
     $("#profile-campus").value = "";
