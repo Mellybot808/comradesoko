@@ -335,6 +335,7 @@ h1 span { color: #4d933b; }
 .room-card-heading > strong { flex: 0 0 auto; color: #314f35; font-size: 11px; text-align: right; }
 .room-card-heading > strong small { display: block; margin-top: 2px; color: #8a9288; font-size: 8px; font-weight: 500; }
 .room-location { margin: 7px 0 10px; color: #7b837c; font-size: 9px; }
+.room-map-link { display: inline-block; margin: -4px 0 11px; color: #477a3d; font-size: 9px; font-weight: 700; }
 .room-features { display: flex; flex-wrap: wrap; gap: 5px; margin: 0 0 10px; padding: 0; list-style: none; }
 .room-features li { padding: 5px 6px; border-radius: 4px; color: #61715f; background: #f1f5ed; font-size: 8px; }
 .room-terms { margin: 0; color: #757e75; font-size: 9px; }
@@ -485,7 +486,12 @@ h1 span { color: #4d933b; }
 .button-outline { min-height: 42px; border: 1px solid #dce4d7; color: #526452; background: white; font-size: 10px; }
 .button-outline[aria-disabled="true"] { opacity: .6; pointer-events: none; }
 .review-trigger { width: 100%; margin-top: 8px; cursor: pointer; }
-.map-link { display: block; margin-top: 13px; color: #477a3d; font-size: 10px; font-weight: 700; }
+.map-disclaimer { margin: -2px 0 8px; color: #858c84; font-size: 9px; line-height: 1.5; }
+.profile-map { display: grid; gap: 8px; }
+.map-toggle { width: 100%; cursor: pointer; }
+.map-toggle:disabled { color: #71806e; background: #eff3ea; }
+.profile-map iframe { width: 100%; height: 220px; border: 1px solid #e2e7de; border-radius: 7px; background: #f1f3ed; }
+.map-link { justify-self: start; color: #477a3d; font-size: 10px; font-weight: 700; }
 .toast { position: fixed; z-index: 20; right: 18px; bottom: 18px; max-width: min(360px, calc(100% - 36px)); padding: 12px 15px; border: 1px solid #47614a; border-radius: 8px; color: white; background: #23382b; box-shadow: 0 8px 24px rgba(0,0,0,.17); font-size: 11px; line-height: 1.5; opacity: 0; pointer-events: none; transform: translateY(8px); transition: opacity .2s, transform .2s; }
 .toast.visible { opacity: 1; transform: translateY(0); }
 
