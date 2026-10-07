@@ -5,6 +5,7 @@ const STORE = {
   posts: "comradesoko.posts",
   saves: "comradesoko.saves",
   orders: "comradesoko.orders",
+  escrows: "comradesoko.escrows",
   comments: "comradesoko.comments",
   conversations: "comradesoko.conversations"
 };
@@ -190,6 +191,163 @@ function getOrders() {
   return readStore(STORE.orders, []);
 }
 
+function renderEscrowDashboard(dashboard, profile) {
+  const section = document.createElement("section");
+  section.className = "escrow-dashboard";
+  section.setAttribute("aria-labelledby", "escrow-dashboard-title");
+
+  const heading = document.createElement("div");
+  heading.className = "dashboard-subheading";
+  const title = document.createElement("h3");
+  title.id = "escrow-dashboard-title";
+  title.textContent = "Escrow transaction preview";
+  const badge = document.createElement("span");
+  badge.className = "escrow-demo-badge";
+  badge.textContent = "SIMULATION ONLY";
+  heading.append(title, badge);
+
+  const disclosure = document.createElement("p");
+  disclosure.className = "escrow-disclosure";
+  disclosure.textContent = "No money is collected, held, or released by this website. This local demo does not protect a real transaction. Do not send money to ComradeSoko based on this preview.";
+  const termsLink = document.createElement("a");
+  termsLink.href = "#escrow-terms";
+  termsLink.textContent = "Read the proposed escrow terms";
+  termsLink.addEventListener("click", () => {
+    const terms = $("#escrow-terms");
+    if (terms) terms.open = true;
+  });
+  disclosure.append(" ", termsLink);
+
+  const form = document.createElement("form");
+  form.className = "escrow-create-form";
+  form.setAttribute("aria-label", "Create a simulated escrow transaction");
+  const itemLabel = document.createElement("label");
+  itemLabel.textContent = "Item or service";
+  const itemInput = document.createElement("input");
+  itemInput.name = "item";
+  itemInput.maxLength = 80;
+  itemInput.placeholder = "e.g. 13kg gas refill";
+  itemInput.required = true;
+  itemLabel.append(itemInput);
+  const sellerLabel = document.createElement("label");
+  sellerLabel.textContent = "Seller or provider";
+  const sellerInput = document.createElement("input");
+  sellerInput.name = "seller";
+  sellerInput.maxLength = 60;
+  sellerInput.placeholder = "Seller or business name";
+  sellerInput.required = true;
+  sellerLabel.append(sellerInput);
+  const amountLabel = document.createElement("label");
+  amountLabel.textContent = "Agreed amount (KES)";
+  const amountInput = document.createElement("input");
+  amountInput.name = "amount";
+  amountInput.type = "number";
+  amountInput.min = "1";
+  amountInput.max = "10000000";
+  amountInput.step = "1";
+  amountInput.inputMode = "numeric";
+  amountInput.placeholder = "e.g. 3200";
+  amountInput.required = true;
+  amountLabel.append(amountInput);
+  const create = document.createElement("button");
+  create.type = "submit";
+  create.className = "button button-dark compact-button";
+  create.textContent = "Create demo record";
+  form.append(itemLabel, sellerLabel, amountLabel, create);
+
+  const records = document.createElement("div");
+  records.className = "escrow-records";
+  const escrows = readStore(STORE.escrows, []).filter((escrow) => escrow.createdBy === profile.id);
+  if (!escrows.length) {
+    const empty = document.createElement("p");
+    empty.className = "form-hint";
+    empty.textContent = "No demo escrow records yet. Create one to preview the two-sided delivery confirmation flow.";
+    records.append(empty);
+  }
+  for (const escrow of escrows.slice().reverse()) {
+    const card = document.createElement("article");
+    card.className = "escrow-record";
+    const recordHeading = document.createElement("div");
+    recordHeading.className = "escrow-record-heading";
+    const item = document.createElement("strong");
+    item.textContent = escrow.item;
+    const amount = document.createElement("span");
+    amount.textContent = `KES ${Number(escrow.amount).toLocaleString("en-KE")}`;
+    recordHeading.append(item, amount);
+    const details = document.createElement("p");
+    details.textContent = `Buyer: ${escrow.buyerName} · Seller: ${escrow.sellerName}`;
+    const status = document.createElement("p");
+    status.className = `escrow-record-status${escrow.adminReleased ? " released" : ""}`;
+    status.textContent = escrow.adminReleased
+      ? "Demo release recorded — no funds moved."
+      : escrow.buyerConfirmed && escrow.sellerConfirmed
+        ? "Both demo confirmations received — ready for simulated admin review."
+        : `Waiting for confirmations · Buyer: ${escrow.buyerConfirmed ? "confirmed" : "pending"} · Seller: ${escrow.sellerConfirmed ? "confirmed" : "pending"}`;
+    const actions = document.createElement("div");
+    actions.className = "escrow-record-actions";
+    if (!escrow.buyerConfirmed && !escrow.adminReleased) {
+      const buyerConfirm = document.createElement("button");
+      buyerConfirm.type = "button";
+      buyerConfirm.className = "text-button";
+      buyerConfirm.dataset.action = "escrow-confirm-buyer";
+      buyerConfirm.dataset.escrowId = escrow.id;
+      buyerConfirm.textContent = "Simulate buyer received";
+      actions.append(buyerConfirm);
+    }
+    if (!escrow.sellerConfirmed && !escrow.adminReleased) {
+      const sellerConfirm = document.createElement("button");
+      sellerConfirm.type = "button";
+      sellerConfirm.className = "text-button";
+      sellerConfirm.dataset.action = "escrow-confirm-seller";
+      sellerConfirm.dataset.escrowId = escrow.id;
+      sellerConfirm.textContent = "Simulate seller delivered";
+      actions.append(sellerConfirm);
+    }
+    if (escrow.buyerConfirmed && escrow.sellerConfirmed && !escrow.adminReleased) {
+      const release = document.createElement("button");
+      release.type = "button";
+      release.className = "text-button escrow-release-button";
+      release.dataset.action = "escrow-demo-release";
+      release.dataset.escrowId = escrow.id;
+      release.textContent = "Simulate admin release";
+      actions.append(release);
+    }
+    card.append(recordHeading, details, status, actions);
+    records.append(card);
+  }
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const itemName = itemInput.value.trim();
+    const sellerName = sellerInput.value.trim();
+    const agreedAmount = Number(amountInput.value);
+    if (!itemName || !sellerName || !Number.isSafeInteger(agreedAmount) || agreedAmount < 1 || agreedAmount > 10000000) {
+      showToast("Enter an item, seller name, and a whole-number amount between KES 1 and KES 10,000,000.");
+      return;
+    }
+    const next = readStore(STORE.escrows, []);
+    next.push({
+      id: idFor("escrow-demo"),
+      createdBy: profile.id,
+      buyerName: profile.name,
+      sellerName,
+      item: itemName,
+      amount: agreedAmount,
+      buyerConfirmed: false,
+      sellerConfirmed: false,
+      adminReleased: false,
+      createdAt: new Date().toISOString()
+    });
+    if (writeStore(STORE.escrows, next)) {
+      renderDashboard();
+      showToast("Local demo record created. No payment was collected.");
+    }
+  });
+
+  section.append(heading, disclosure, form, records);
+  dashboard.append(section);
+}
+
 function getSaves() {
   return readStore(STORE.saves, []);
 }
@@ -308,6 +466,7 @@ function updateAreaOptions() {
 function makeRoomCard(room) {
   const card = document.createElement("article");
   card.className = "room-card";
+  card.dataset.id = room.id || `sample-room-${room.institution.replace(/[^a-z0-9]+/g, "-")}-${room.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
   card.dataset.institution = room.institution;
   card.dataset.area = room.area.toLowerCase();
   card.dataset.rent = String(room.rent);
@@ -361,7 +520,20 @@ function makeRoomCard(room) {
   inquire.target = "_blank";
   inquire.rel = "noopener noreferrer";
   inquire.textContent = "☏  Ask about this room on WhatsApp";
-  body.append(top, place, mapLink, features, terms, inquire);
+  const discussion = document.createElement("section");
+  discussion.className = "room-discussion";
+  discussion.id = `discussion-${card.dataset.id}`;
+  discussion.append(makeDiscussion(card.dataset.id, "room"));
+  const discussionToggle = document.createElement("button");
+  discussionToggle.type = "button";
+  discussionToggle.className = "room-discussion-toggle";
+  discussionToggle.dataset.action = "toggle-room-discussion";
+  discussionToggle.setAttribute("aria-controls", discussion.id);
+  discussionToggle.setAttribute("aria-expanded", "false");
+  const commentCount = discussionCommentsFor(card.dataset.id, "room").length;
+  discussionToggle.textContent = `Questions & comments${commentCount ? ` (${commentCount})` : ""}`;
+  discussion.hidden = true;
+  body.append(top, place, mapLink, features, terms, inquire, discussionToggle, discussion);
   card.append(photo, body);
   return card;
 }
@@ -860,7 +1032,7 @@ function renderDashboard() {
     $("#dashboard-title").textContent = "Your dashboard.";
     const prompt = document.createElement("div");
     prompt.className = "dashboard-empty";
-    prompt.textContent = "Create a local profile to see your saved sellers, order intents, seller tools, and campus listings.";
+    prompt.textContent = "Create a local profile to see your saved sellers, order intents, seller tools, campus listings, and escrow demo.";
     const join = document.createElement("button");
     join.type = "button";
     join.className = "button button-dark";
@@ -952,6 +1124,8 @@ function renderDashboard() {
     dashboard.append(orderList);
   }
 
+  renderEscrowDashboard(dashboard, profile);
+
   const savedHeading = document.createElement("div");
   savedHeading.className = "dashboard-subheading";
   const savedTitle = document.createElement("h3");
@@ -979,6 +1153,7 @@ function renderDashboard() {
     $("#account-button").innerHTML = 'Join / account <span aria-hidden="true">↗</span>';
     renderDashboard();
     renderProducts();
+    renderRooms();
     updateListings();
     showToast("Signed out. Your saved local listings remain in this browser.");
   });
@@ -1087,9 +1262,11 @@ function renderInbox() {
 }
 
 function discussionCommentsFor(targetId, targetType) {
-  return readStore(STORE.comments, []).filter((comment) => targetType === "listing"
-    ? comment.listingId === targetId
-    : comment.postId === targetId && !comment.listingId);
+  return readStore(STORE.comments, []).filter((comment) => {
+    if (targetType === "listing") return comment.listingId === targetId;
+    if (targetType === "room") return comment.roomId === targetId;
+    return comment.postId === targetId && !comment.listingId && !comment.roomId;
+  });
 }
 
 function ensureDiscussionCommentIds() {
@@ -1550,6 +1727,7 @@ $("#account-form").addEventListener("submit", async (event) => {
     campusFilter.value = profile.institution;
     $("#account-button").textContent = accountButtonLabel(profile);
     renderProducts();
+    renderRooms();
     updateAreaOptions();
     updateListings();
     renderHub();
@@ -1621,17 +1799,45 @@ function submitDiscussion(event) {
     createdAt: new Date().toISOString()
   };
   if (form.dataset.targetType === "listing") comment.listingId = form.dataset.targetId;
+  else if (form.dataset.targetType === "room") comment.roomId = form.dataset.targetId;
   else comment.postId = form.dataset.targetId;
   if (writeStore(STORE.comments, [...comments, comment])) {
     renderProducts();
     updateListings();
+    renderRooms();
     renderHub();
+    const newDiscussion = form.dataset.targetType === "room"
+      ? $(".room-discussion", $$(".room-card", roomGrid).find((card) => card.dataset.id === form.dataset.targetId))
+      : form.dataset.targetType === "listing"
+        ? $(".listing-discussion", allListingElements().find((card) => card.dataset.id === form.dataset.targetId))
+        : $(".post-discussion", $$(".hub-post", $("#hub-feed-list")).find((card) => card.dataset.id === form.dataset.targetId));
+    if (newDiscussion) {
+      newDiscussion.hidden = false;
+      const toggle = form.dataset.targetType === "room"
+        ? $(`[aria-controls="${newDiscussion.id}"]`, roomGrid)
+        : form.dataset.targetType === "listing"
+          ? $(`[aria-controls="${newDiscussion.id}"]`, listingGrid)
+          : null;
+      if (toggle) toggle.setAttribute("aria-expanded", "true");
+      if (form.dataset.targetType === "hub") newDiscussion.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
     showToast("Your comment was saved in this browser.");
   }
 }
 
 listingGrid.addEventListener("submit", submitDiscussion);
+roomGrid.addEventListener("submit", submitDiscussion);
 $("#hub-feed-list").addEventListener("submit", submitDiscussion);
+
+roomGrid.addEventListener("click", (event) => {
+  const button = event.target.closest('[data-action="toggle-room-discussion"]');
+  if (!button) return;
+  const discussion = document.getElementById(button.getAttribute("aria-controls"));
+  if (!discussion) return;
+  discussion.hidden = !discussion.hidden;
+  button.setAttribute("aria-expanded", String(!discussion.hidden));
+  if (!discussion.hidden) $(".discussion-form input", discussion)?.focus();
+});
 
 $("#hub-feed-list").addEventListener("click", (event) => {
   const button = event.target.closest("button[data-action]");
@@ -1678,8 +1884,35 @@ $("#inbox-thread").addEventListener("submit", (event) => {
 });
 
 $("#dashboard-content").addEventListener("click", (event) => {
-  const button = event.target.closest('[data-action="toggle-stock"]');
+  const button = event.target.closest("button[data-action]");
   if (!button) return;
+  if (button.dataset.action.startsWith("escrow-")) {
+    const profile = getProfile();
+    const escrows = readStore(STORE.escrows, []);
+    const escrow = escrows.find((item) => item.id === button.dataset.escrowId && item.createdBy === profile?.id);
+    if (!escrow) {
+      showToast("That local demo transaction is unavailable.");
+      return;
+    }
+    if (button.dataset.action === "escrow-confirm-buyer") escrow.buyerConfirmed = true;
+    else if (button.dataset.action === "escrow-confirm-seller") escrow.sellerConfirmed = true;
+    else if (button.dataset.action === "escrow-demo-release") {
+      if (!escrow.buyerConfirmed || !escrow.sellerConfirmed) {
+        showToast("Both buyer and seller must confirm delivery before the demo can record a release.");
+        return;
+      }
+      escrow.adminReleased = true;
+      escrow.releasedAt = new Date().toISOString();
+    }
+    if (writeStore(STORE.escrows, escrows)) {
+      renderDashboard();
+      showToast(escrow.adminReleased
+        ? "Demo release recorded. No payment was made."
+        : "Demo confirmation recorded. No payment was made.");
+    }
+    return;
+  }
+  if (button.dataset.action !== "toggle-stock") return;
   const products = getProducts();
   const product = products.find((item) => item.id === button.dataset.productId);
   if (!product) {

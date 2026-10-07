@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="styles.css?v=campus-glow">
     <script src="institutions.js" defer></script>
     <script src="tvet-institutions.js" defer></script>
-    <script src="script.js?v=item-discussions" defer></script>
+    <script src="script.js?v=escrow-preview" defer></script>
     <script type="module" src="firebase-auth.js"></script>
   </head>
   <body>
@@ -369,7 +369,7 @@
           <div><div class="eyebrow section-eyebrow">SAFETY, PRIVACY &amp; FAIR DEALING</div><h2>Community policies.</h2></div>
           <span class="listing-count">DRAFT FOR LEGAL REVIEW</span>
         </div>
-        <p class="policy-disclosure"><strong>Important:</strong> These are proposed launch policies, not a legal agreement. ComradeSoko is currently a browser-only prototype. It does not verify people, process payments, collect identity documents, operate subscriptions, or provide a staffed 24-hour dispute service. Have a Kenyan lawyer review these terms before using them for a public launch.</p>
+        <p class="policy-disclosure"><strong>Important:</strong> These are proposed launch policies, not a legal agreement. ComradeSoko is currently a browser-only prototype. It does not verify people, process payments, hold or release funds, collect identity documents, operate subscriptions, or provide a staffed 24-hour dispute service. Have a Kenyan lawyer and appropriate financial-regulatory specialists review any escrow service before launch.</p>
 
         <details class="policy-card" id="terms-of-use">
           <summary>Who we are, how the marketplace works &amp; community rules</summary>
@@ -387,11 +387,28 @@
           </div>
         </details>
 
+        <details class="policy-card" id="escrow-terms">
+          <summary>Proposed escrow terms &amp; delivery confirmation (draft — not active)</summary>
+          <div class="policy-copy">
+            <p><strong>Not a live service:</strong> ComradeSoko does not accept deposits, hold money, release payments, or provide escrow today. The dashboard preview is stored in one browser and records simulated confirmations only. Never send money to ComradeSoko based on the demo.</p>
+            <h3>1. Parties and transaction agreement</h3>
+            <p>A future escrow transaction would require the buyer and seller to agree in writing to the item or service, condition or scope, total price, delivery method and location, delivery deadline, any delivery charges, and the payment and dispute steps before funding. Both parties would need verified accounts and access to the same transaction record. Transactions involving prohibited or unlawful goods or services would not be eligible.</p>
+            <h3>2. Funding and safeguarding</h3>
+            <p>If introduced, funds would be collected and safeguarded only through an approved payment provider and a legally compliant arrangement. ComradeSoko staff must not use personal M-Pesa numbers or ordinary business accounts as an informal holding account. Funding would count only after the payment provider confirms it; screenshots or a buyer's “sent” message alone are not proof. The buyer should never share an M-Pesa PIN or one-time code.</p>
+            <h3>3. Delivery, acceptance and proposed release</h3>
+            <p>After delivery or completion, the buyer would inspect the item or service and confirm receipt in the transaction record; the seller would separately confirm delivery or completion. A future payment provider—not a browser button or an individual admin—would release funds only under the published payout rules after both parties confirm, or after a documented review resolves a dispute under those rules. The exact confirmation window, acceptable evidence, partial-delivery handling, cancellation and refund rules must be agreed and published before launch.</p>
+            <h3>4. Disputes and admin review</h3>
+            <p>Either party should be able to flag non-delivery, a material mismatch, damage, an incorrect amount, or suspected fraud before payout. A disputed payout would be paused with the payment provider while an authorized reviewer examines relevant order details and evidence, gives both parties a fair chance to respond, records the decision and reason, and provides an appeal or escalation route. Admins must not change payment status without an auditable server-side record. Response times, evidence retention, privacy safeguards, appeals, and urgent safety handling still require definition.</p>
+            <h3>5. Fees, risk and legal review</h3>
+            <p>Earlier planning mentioned possible fees of 2% for Comrade Sellers and 4% for Local Providers; these are unapproved proposals, are not charged, and would need confirmation, clear disclosure of who pays, tax treatment, and agreement before a transaction begins. Any final escrow terms must explain provider charges, refunds, failed or reversed payments, payout timing, responsibilities, limitations, complaint handling, and applicable consumer rights. Obtain Kenyan legal and financial-regulatory advice and confirm an appropriate licensed payment-provider arrangement before offering this service.</p>
+          </div>
+        </details>
+
         <details class="policy-card" id="privacy-policy">
           <summary>Privacy policy</summary>
           <div class="policy-copy">
             <h3>Prototype data and proposed collection</h3>
-            <p>Listings, reviews, comments, inbox messages, and other marketplace demo activity are stored in this browser and are not shared with other users. You can create a browser-local profile without verification. If you choose to sign in when Firebase is configured, authentication details are sent to Firebase Authentication, an optional profile photo is uploaded to private Firebase Storage, and profile details are saved in a user-restricted Firestore record. Avoid entering payment details or identity documents.</p>
+            <p>Listings, reviews, comments on products, campus posts and room listings, inbox messages, simulated escrow records, and other marketplace demo activity are stored in this browser and are not shared with other users. You can create a browser-local profile without verification. If you choose to sign in when Firebase is configured, authentication details are sent to Firebase Authentication, an optional profile photo is uploaded to private Firebase Storage, and profile details are saved in a user-restricted Firestore record. Avoid entering payment details or identity documents.</p>
             <p>Firebase Authentication verifies email through a secure sign-in link, phone through an SMS code, or Google sign-in. These checks verify access to a contact method, not legal identity. Identity documents are not collected by this system; any future collection requires a separate, reviewed verification process.</p>
             <h3>Use, access and deletion</h3>
             <p>In a future service, profile and shop information would be used to show relevant listings and facilitate order alerts. Provider identity documents would be restricted to authorized administrators and never shown to buyers; buyers would see the business name and contact phone. We do not intend to sell personal data or collect M-Pesa PINs.</p>
