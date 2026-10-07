@@ -5,7 +5,8 @@ const STORE = {
   posts: "comradesoko.posts",
   saves: "comradesoko.saves",
   orders: "comradesoko.orders",
-  comments: "comradesoko.comments"
+  comments: "comradesoko.comments",
+  conversations: "comradesoko.conversations"
 };
 
 const $ = (selector, root = document) => root.querySelector(selector);
@@ -34,6 +35,7 @@ const toast = $("#toast");
 
 let activeCategory = "";
 let activeSeller = null;
+let activeConversationId = "";
 let toastTimer;
 const sampleRooms = [
   { institution: "kisii university", title: "Single room, water included", area: "Manyatta", rent: 4500, deposit: 4500, features: ["Water included", "Secure gate", "Walking distance"], available: "Vacant now", contact: "Comrade Homes" },
@@ -111,6 +113,77 @@ function getProducts() {
 
 function getReviews() {
   return readStore(STORE.reviews, []);
+}
+
+function getConversations() {
+  return readStore(STORE.conversations, []);
+}
+
+function conversationIdFor(firstId, secondId) {
+  return [firstId, secondId].sort().join("::");
+}
+
+function openConversation(contact, firstMessage = "") {
+  const profile = getProfile();
+  if (!profile) {
+    showToast("Create a local profile to send an inbox message.");
+    accountDialog.showModal();
+    return;
+  }
+  if (!contact.id || contact.id === profile.id) {
+    showToast("You can only message another campus member.");
+    return;
+  }
+  if (contact.institution !== profile.institution) {
+    showToast("Inbox messages are limited to your profile institution.");
+    return;
+  }
+  const id = conversationIdFor(profile.id, contact.id);
+  const conversations = getConversations();
+  let conversation = conversations.find((item) => item.id === id);
+  if (!conversation) {
+    conversation = {
+      id,
+      institution: profile.institution,
+      participants: [
+        { id: profile.id, name: profile.name },
+        { id: contact.id, name: contact.name }
+      ],
+      messages: []
+    };
+    conversations.push(conversation);
+  }
+  activeConversationId = id;
+  if (!writeStore(STORE.conversations, conversations)) return;
+  renderInbox();
+  const composer = $("#inbox-thread textarea[name='message']");
+  if (firstMessage && conversation.messages.length === 0 && composer) {
+    composer.value = firstMessage;
+    composer.focus();
+  }
+  $("#inbox").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function shareHubPost(post) {
+  const url = new URL(window.location.href);
+  url.hash = "developers-hub";
+  const shareData = { title: `ComradeSoko: ${post.kind}`, text: `${post.name}: ${post.content}`, url: url.href };
+  if (navigator.share) {
+    navigator.share(shareData).catch((error) => {
+      if (error.name !== "AbortError") showToast("Could not open the share menu. Try copying the post link.");
+    });
+    return;
+  }
+  if (!navigator.clipboard?.writeText) {
+    showToast("Sharing is not available in this browser.");
+    return;
+  }
+  navigator.clipboard.writeText(`${shareData.text} ${shareData.url}`)
+    .then(() => showToast("Post text and link copied."))
+    .catch((error) => {
+      console.error("Could not copy campus post share link.", error);
+      showToast("Could not copy the post. Check browser clipboard permissions.");
+    });
 }
 
 function getOrders() {
@@ -363,7 +436,14 @@ function makeConnectionCard(profile) {
   contact.target = "_blank";
   contact.rel = "noopener noreferrer";
   contact.textContent = "Start a WhatsApp intro";
-  card.append(top, interest, bio, contact);
+  const inboxContact = document.createElement("button");
+  inboxContact.type = "button";
+  inboxContact.className = "connection-action connection-inbox-action";
+  inboxContact.dataset.contactId = `connection:${profile.institution}:${profile.name}`;
+  inboxContact.dataset.contactName = profile.name;
+  inboxContact.dataset.institution = profile.institution;
+  inboxContact.textContent = "Message in ComradeSoko";
+  card.append(top, interest, bio, inboxContact, contact);
   return card;
 }
 
@@ -372,6 +452,16 @@ function renderConnections(institution) {
   connectionsGrid.replaceChildren(...recommendations.map(makeConnectionCard));
   connectionsSection.hidden = recommendations.length === 0;
 }
+
+connectionsGrid.addEventListener("click", (event) => {
+  const button = event.target.closest(".connection-inbox-action");
+  if (!button) return;
+  openConversation({
+    id: button.dataset.contactId,
+    name: button.dataset.contactName,
+    institution: button.dataset.institution
+  });
+});
 
 function phoneForWhatsApp(value) {
   const digits = (value || "").replace(/\D/g, "");
@@ -408,12 +498,17 @@ function addCardControls(card) {
     sellerButton.className = "seller-profile-button";
     sellerButton.dataset.action = "view-seller";
     sellerButton.textContent = "Seller profile";
+    const messageButton = document.createElement("button");
+    messageButton.type = "button";
+    messageButton.className = "message-seller-button";
+    messageButton.dataset.action = "message-seller";
+    messageButton.textContent = "Message";
     const saveButton = document.createElement("button");
     saveButton.type = "button";
     saveButton.className = "save-button";
     saveButton.dataset.action = "save-seller";
     saveButton.setAttribute("aria-label", "Save seller");
-    container.append(sellerButton, saveButton);
+    container.append(sellerButton, messageButton, saveButton);
     $(".listing-details", card).append(container);
   }
 
@@ -434,6 +529,7 @@ function makeProductCard(product) {
   card.dataset.area = product.area.toLowerCase();
   card.dataset.seller = product.seller;
   card.dataset.product = product.name;
+  card.dataset.ownerId = product.ownerId || "";
   card.dataset.phone = product.phone || "";
   card.dataset.owner = product.owner || "";
   card.dataset.stock = String(product.stock);
@@ -675,6 +771,15 @@ function renderSellerProfile(card) {
     $("#review-seller-name").textContent = activeSeller;
     reviewDialog.showModal();
   });
+  const inboxButton = document.createElement("button");
+  inboxButton.className = "button button-outline review-trigger";
+  inboxButton.type = "button";
+  inboxButton.textContent = "Message seller in ComradeSoko inbox";
+  inboxButton.addEventListener("click", () => openConversation({
+    id: card.dataset.ownerId || `seller:${card.dataset.campus}:${activeSeller}`,
+    name: activeSeller,
+    institution: card.dataset.campus
+  }, `Hi ${activeSeller}, I’m interested in ${card.dataset.product} listed on ComradeSoko.`));
   const mapHeading = document.createElement("h3");
   mapHeading.textContent = "Find the area";
   const mapDescription = document.createElement("p");
@@ -706,7 +811,7 @@ function renderSellerProfile(card) {
   mapLink.rel = "noopener noreferrer";
   mapLink.textContent = "Open area in Google Maps ↗";
   map.append(mapButton, mapLink);
-  details.append(photo, tag, title, institution, hours, productHeading, product, rating, reviewList, actions, reviewButton, mapHeading, mapDescription, map);
+  details.append(photo, tag, title, institution, hours, productHeading, product, rating, reviewList, actions, reviewButton, inboxButton, mapHeading, mapDescription, map);
   if (profile && profile.institution === campusFilter.value && card.dataset.campus !== profile.institution) {
     showToast("Seller profiles from another institution are hidden by the campus lock.");
     return;
@@ -726,6 +831,7 @@ function renderDashboard() {
   const profile = getProfile();
   const dashboard = $("#dashboard-content");
   dashboard.replaceChildren();
+  renderInbox();
   if (!profile) {
     $("#dashboard-title").textContent = "Your dashboard.";
     const prompt = document.createElement("div");
@@ -847,6 +953,107 @@ function renderDashboard() {
   dashboard.append(exit);
 }
 
+function renderInbox() {
+  const profile = getProfile();
+  const conversations = getConversations()
+    .filter((conversation) => profile && conversation.participants.some((participant) => participant.id === profile.id))
+    .sort((first, second) => {
+      const firstTime = first.messages.at(-1)?.createdAt || "";
+      const secondTime = second.messages.at(-1)?.createdAt || "";
+      return secondTime.localeCompare(firstTime);
+    });
+  const list = $("#inbox-list");
+  const thread = $("#inbox-thread");
+  list.replaceChildren();
+  thread.replaceChildren();
+  if (!profile) {
+    const note = document.createElement("p");
+    note.className = "inbox-empty";
+    note.textContent = "Create a local profile to start a conversation.";
+    const join = document.createElement("button");
+    join.type = "button";
+    join.className = "button button-dark";
+    join.textContent = "Join / account";
+    join.addEventListener("click", () => accountDialog.showModal());
+    list.append(note, join);
+    thread.textContent = "Your conversation will appear here.";
+    return;
+  }
+  if (!conversations.length) {
+    const note = document.createElement("p");
+    note.className = "inbox-empty";
+    note.textContent = "No messages yet. Start a chat from a campus seller listing or a Comrades Hub post.";
+    list.append(note);
+    thread.textContent = "Choose a seller or campus post to start a conversation.";
+    return;
+  }
+  for (const conversation of conversations) {
+    const other = conversation.participants.find((participant) => participant.id !== profile.id);
+    if (!other) continue;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `conversation-item${conversation.id === activeConversationId ? " selected" : ""}`;
+    button.dataset.conversationId = conversation.id;
+    const name = document.createElement("strong");
+    name.textContent = other.name;
+    const snippet = document.createElement("span");
+    snippet.textContent = conversation.messages.at(-1)?.text || "Start the conversation";
+    button.append(name, snippet);
+    button.addEventListener("click", () => {
+      activeConversationId = conversation.id;
+      renderInbox();
+    });
+    list.append(button);
+  }
+  let selected = conversations.find((conversation) => conversation.id === activeConversationId) || conversations[0];
+  activeConversationId = selected.id;
+  const other = selected.participants.find((participant) => participant.id !== profile.id);
+  const heading = document.createElement("div");
+  heading.className = "thread-heading";
+  const title = document.createElement("strong");
+  title.textContent = other?.name || "Campus member";
+  const campus = document.createElement("span");
+  campus.textContent = institutionName(selected.institution);
+  heading.append(title, campus);
+  const messages = document.createElement("div");
+  messages.className = "thread-messages";
+  for (const message of selected.messages) {
+    const bubble = document.createElement("article");
+    bubble.className = `message-bubble${message.senderId === profile.id ? " own-message" : ""}`;
+    const author = document.createElement("strong");
+    author.textContent = message.senderId === profile.id ? "You" : message.senderName;
+    const body = document.createElement("p");
+    body.textContent = message.text;
+    const time = document.createElement("time");
+    time.dateTime = message.createdAt;
+    time.textContent = new Date(message.createdAt).toLocaleString("en-KE", { dateStyle: "medium", timeStyle: "short" });
+    bubble.append(author, body, time);
+    messages.append(bubble);
+  }
+  if (!selected.messages.length) {
+    const note = document.createElement("p");
+    note.className = "inbox-empty";
+    note.textContent = "Say hello to start your conversation.";
+    messages.append(note);
+  }
+  const form = document.createElement("form");
+  form.className = "message-compose";
+  form.dataset.conversationId = selected.id;
+  const input = document.createElement("textarea");
+  input.name = "message";
+  input.maxLength = 1000;
+  input.placeholder = "Write a message...";
+  input.setAttribute("aria-label", "Write a message");
+  input.required = true;
+  const send = document.createElement("button");
+  send.type = "submit";
+  send.className = "button button-dark";
+  send.textContent = "Send";
+  form.append(input, send);
+  thread.append(heading, messages, form);
+  messages.scrollTop = messages.scrollHeight;
+}
+
 function commentsFor(postId) {
   return readStore(STORE.comments, []).filter((comment) => comment.postId === postId);
 }
@@ -904,7 +1111,21 @@ function renderHub() {
     collaborate.target = "_blank";
     collaborate.rel = "noopener noreferrer";
     collaborate.textContent = "Connect";
-    actions.append(commentForm, collaborate);
+    const message = document.createElement("button");
+    message.type = "button";
+    message.className = "hub-message-button";
+    message.dataset.action = "message-post-author";
+    message.dataset.contactId = post.authorId || `hub:${post.institution}:${post.name}`;
+    message.dataset.contactName = post.name;
+    message.dataset.institution = post.institution;
+    message.textContent = "Inbox";
+    const share = document.createElement("button");
+    share.type = "button";
+    share.className = "hub-share-button";
+    share.dataset.action = "share-post";
+    share.dataset.postId = post.id;
+    share.textContent = "Share";
+    actions.append(commentForm, message, share, collaborate);
     card.append(meta, type, content, comments, actions);
     feed.append(card);
   }
@@ -1083,6 +1304,14 @@ listingGrid.addEventListener("click", (event) => {
     renderSellerProfile(card);
     return;
   }
+  if (button.dataset.action === "message-seller") {
+    openConversation({
+      id: card.dataset.ownerId || `seller:${card.dataset.campus}:${card.dataset.seller}`,
+      name: card.dataset.seller,
+      institution: card.dataset.campus
+    }, `Hi ${card.dataset.seller}, I’m interested in ${card.dataset.product} listed on ComradeSoko.`);
+    return;
+  }
   if (button.dataset.action === "save-seller") {
     const profile = getProfile();
     if (!profile) {
@@ -1207,6 +1436,7 @@ $("#hub-post-form").addEventListener("submit", (event) => {
   const posts = readStore(STORE.posts, []);
   posts.unshift({
     id: idFor("post"),
+    authorId: profile.id,
     institution: profile.institution,
     name: profile.name,
     area: profile.area,
@@ -1234,6 +1464,50 @@ $("#hub-feed-list").addEventListener("submit", (event) => {
   const comments = readStore(STORE.comments, []);
   comments.push({ postId: form.dataset.postId, name: profile.name, text: $('input[name="comment"]', form).value.trim() });
   if (writeStore(STORE.comments, comments)) renderHub();
+});
+
+$("#hub-feed-list").addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-action]");
+  if (!button) return;
+  if (button.dataset.action === "message-post-author") {
+    openConversation({
+      id: button.dataset.contactId,
+      name: button.dataset.contactName,
+      institution: button.dataset.institution
+    });
+    return;
+  }
+  if (button.dataset.action === "share-post") {
+    const post = [...readStore(STORE.posts, []), ...sampleHubPosts].find((item) => item.id === button.dataset.postId);
+    if (post) shareHubPost(post);
+  }
+});
+
+$("#inbox-thread").addEventListener("submit", (event) => {
+  const form = event.target.closest(".message-compose");
+  if (!form) return;
+  event.preventDefault();
+  const profile = getProfile();
+  if (!profile) {
+    showToast("Create a local profile to send an inbox message.");
+    accountDialog.showModal();
+    return;
+  }
+  const text = $('textarea[name="message"]', form).value.trim();
+  if (!text) return;
+  const conversations = getConversations();
+  const conversation = conversations.find((item) => item.id === form.dataset.conversationId && item.participants.some((participant) => participant.id === profile.id));
+  if (!conversation) {
+    showToast("That conversation is unavailable in this local profile.");
+    renderInbox();
+    return;
+  }
+  conversation.messages.push({ id: idFor("message"), senderId: profile.id, senderName: profile.name, text, createdAt: new Date().toISOString() });
+  if (writeStore(STORE.conversations, conversations)) {
+    activeConversationId = conversation.id;
+    renderInbox();
+    $("#inbox-thread textarea[name='message']").focus();
+  }
 });
 
 $("#dashboard-content").addEventListener("click", (event) => {
