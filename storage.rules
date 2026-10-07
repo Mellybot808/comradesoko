@@ -1,0 +1,21 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isVerifiedOwner(userId) {
+      return request.auth != null
+        && request.auth.uid == userId
+        && (
+          request.auth.token.email_verified == true
+          || request.auth.token.phone_number != null
+        );
+    }
+
+    match /profile-photos/{userId}/{fileName} {
+      allow read: if isVerifiedOwner(userId);
+      allow create, update: if isVerifiedOwner(userId)
+        && request.resource.size <= 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp)');
+      allow delete: if isVerifiedOwner(userId);
+    }
+  }
+}

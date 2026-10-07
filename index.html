@@ -15,10 +15,11 @@
       href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     >
-    <link rel="stylesheet" href="styles.css?v=campus-inbox">
+    <link rel="stylesheet" href="styles.css?v=campus-glow">
     <script src="institutions.js" defer></script>
     <script src="tvet-institutions.js" defer></script>
-    <script src="script.js?v=campus-inbox" defer></script>
+    <script src="script.js?v=item-discussions" defer></script>
+    <script type="module" src="firebase-auth.js"></script>
   </head>
   <body>
     <header class="site-header">
@@ -41,6 +42,10 @@
         </a>
       </div>
     </header>
+
+    <div class="ambient-stars" aria-hidden="true">
+      <span>✦</span><span>✧</span><span>✦</span><span>✧</span><span>✦</span><span>✧</span><span>✦</span>
+    </div>
 
     <main>
       <section class="hero" id="discover">
@@ -80,6 +85,25 @@
             <span class="avatars" aria-hidden="true"><i>J</i><i>A</i><i>M</i></span>
             <span>Find a comrade. Support a hustle.</span>
           </div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="art-circle"></div>
+          <div class="art-orbit orbit-one"></div>
+          <div class="art-orbit orbit-two"></div>
+          <div class="art-card card-one">
+            <span class="mini-tag">FRESH ON YOUR CAMPUS</span>
+            <div class="product-illustration product-headphones"><span>🎧</span></div>
+            <div class="product-label"><strong>Find your next favourite</strong><span>Good finds, close to campus</span></div>
+          </div>
+          <div class="art-card card-two">
+            <span class="mini-tag">COMRADE-RECOMMENDED</span>
+            <div class="product-illustration product-coffee">🥑</div>
+            <div class="product-label"><strong>Local people. Real hustles.</strong><span>Discover, connect, support.</span></div>
+          </div>
+          <div class="art-sticker sticker-top"><span>✦</span> CAMPUS FINDS, GLOWING</div>
+          <div class="art-sticker sticker-bottom"><span>↗</span> MADE FOR THE SOKO</div>
+          <span class="sparkle sparkle-one">✦</span>
+          <span class="sparkle sparkle-two">✧</span>
         </div>
       </section>
 
@@ -367,8 +391,8 @@
           <summary>Privacy policy</summary>
           <div class="policy-copy">
             <h3>Prototype data and proposed collection</h3>
-            <p>This prototype stores profile details, listings, photos, reviews, and other demo activity in this browser’s local storage. It does not send them to ComradeSoko or encrypt them as a server would. Avoid entering real personal, payment, or identity information here.</p>
-            <p>For a future service, the proposed data may include name, phone, institution and area, shop photos, and an identity document from Local Providers for verification only. Identity documents are not collected by this prototype. A production system must implement secure, encrypted storage and access controls before collecting them.</p>
+            <p>Listings, reviews, comments, inbox messages, and other marketplace demo activity are stored in this browser and are not shared with other users. You can create a browser-local profile without verification. If you choose to sign in when Firebase is configured, authentication details are sent to Firebase Authentication, an optional profile photo is uploaded to private Firebase Storage, and profile details are saved in a user-restricted Firestore record. Avoid entering payment details or identity documents.</p>
+            <p>Firebase Authentication verifies email through a secure sign-in link, phone through an SMS code, or Google sign-in. These checks verify access to a contact method, not legal identity. Identity documents are not collected by this system; any future collection requires a separate, reviewed verification process.</p>
             <h3>Use, access and deletion</h3>
             <p>In a future service, profile and shop information would be used to show relevant listings and facilitate order alerts. Provider identity documents would be restricted to authorized administrators and never shown to buyers; buyers would see the business name and contact phone. We do not intend to sell personal data or collect M-Pesa PINs.</p>
             <p>Server-side account deletion within seven days after a WhatsApp request is a proposed service commitment, not an available prototype feature. For this local demo, use “Clear local profile” in the dashboard and clear this site’s browser data to remove locally stored prototype information. Support: <a href="https://wa.me/254764658897?text=Delete%20my%20account" target="_blank" rel="noopener noreferrer">WhatsApp “Delete my account”</a>.</p>
@@ -446,7 +470,20 @@
         <button class="dialog-close" type="button" data-close aria-label="Close">×</button>
         <div class="eyebrow section-eyebrow">JOIN YOUR CAMPUS SOKO</div>
         <h2 id="account-dialog-title">Create your local profile.</h2>
-        <p class="dialog-description">Prototype profile only: details stay in this browser and are not sent to a server.</p>
+        <p class="dialog-description">Create a local profile now, or optionally verify your email or phone with Firebase. Verification and a profile photo do not prove legal identity. Don’t upload ID documents here.</p>
+        <fieldset class="auth-methods">
+          <legend>Optional account verification</legend>
+          <label>Email<input id="auth-email" type="email" autocomplete="email" placeholder="you@example.com"></label>
+          <button class="button button-outline" id="email-verify-button" type="button">Send secure email verification link</button>
+          <label>Phone number<input id="auth-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+254 7xx xxx xxx"></label>
+          <div id="recaptcha-container"></div>
+          <button class="button button-outline" id="phone-code-button" type="button">Send SMS verification code</button>
+          <label id="phone-code-field" hidden>SMS verification code<input id="phone-verification-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6"></label>
+          <button class="button button-outline" id="phone-confirm-button" type="button" hidden>Verify SMS code</button>
+          <button class="button button-google" id="google-signin-button" type="button">Continue with Google</button>
+          <p class="auth-status" id="auth-status" role="status" aria-live="polite">Verification is optional. You can create a local profile without signing in.</p>
+        </fieldset>
+        <fieldset class="kyc-fields" id="kyc-fields">
         <label>Your name<input id="profile-name" required maxlength="50" autocomplete="name"></label>
         <label>I’m here as
           <select id="profile-role"><option value="buyer">Buyer / comrade</option><option value="seller">Student seller / business owner</option><option value="developer">Developer / creative</option><option value="local-provider">Local seller or service provider (not a student)</option></select>
@@ -458,9 +495,11 @@
           </select>
         </label>
         <label><span id="profile-area-label">Campus area</span><input id="profile-area" required maxlength="50" placeholder="e.g. Manyatta, Main Gate"></label>
-        <label>WhatsApp number <span class="optional-label">Optional</span><input id="profile-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="e.g. 0712 345 678"></label>
+        <label>Profile photo <span class="optional-label">Optional · JPEG/PNG/WebP · max 5 MB</span><input id="profile-photo" type="file" accept="image/jpeg,image/png,image/webp"></label>
+        <label>WhatsApp number <span class="optional-label">Optional if your verified account uses phone</span><input id="profile-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="e.g. 0712 345 678"></label>
         <label id="provider-agreement-field" class="agreement-field" hidden><span class="agreement-checkbox"><input id="provider-agreement-check" type="checkbox"> I acknowledge the <a href="#provider-agreement" target="_blank">proposed Local Provider agreement</a>. This is not a legally recorded e-signature.</span></label>
-        <button class="button button-dark dialog-submit" type="submit">Save local profile <span>↗</span></button>
+        </fieldset>
+        <button class="button button-dark dialog-submit" id="complete-profile-button" type="submit">Create profile <span>↗</span></button>
         <p class="form-hint" id="account-form-hint"></p>
       </form>
     </dialog>

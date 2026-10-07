@@ -490,6 +490,10 @@ function applyCardRating(card) {
 
 function addCardControls(card) {
   const actions = $(".listing-actions", card);
+  if (!card.dataset.id) {
+    const stablePart = (value) => value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    card.dataset.id = `sample-${stablePart(card.dataset.campus)}-${stablePart(card.dataset.seller)}-${stablePart(card.dataset.product)}`;
+  }
   if (!actions) {
     const container = document.createElement("div");
     container.className = "listing-actions";
@@ -508,9 +512,29 @@ function addCardControls(card) {
     saveButton.className = "save-button";
     saveButton.dataset.action = "save-seller";
     saveButton.setAttribute("aria-label", "Save seller");
-    container.append(sellerButton, messageButton, saveButton);
+    const discussionButton = document.createElement("button");
+    discussionButton.type = "button";
+    discussionButton.className = "discussion-toggle";
+    discussionButton.dataset.action = "toggle-discussion";
+    container.append(sellerButton, messageButton, saveButton, discussionButton);
     $(".listing-details", card).append(container);
   }
+
+  let discussion = $(".listing-discussion", card);
+  if (!discussion) {
+    discussion = document.createElement("section");
+    discussion.className = "listing-discussion";
+    discussion.id = `discussion-${card.dataset.id}`;
+    discussion.hidden = true;
+    $(".listing-details", card).append(discussion);
+  }
+  discussion.replaceChildren(makeDiscussion(card.dataset.id, "listing"));
+  const discussionButton = $('[data-action="toggle-discussion"]', card);
+  const discussionCount = discussionCommentsFor(card.dataset.id, "listing").length;
+  discussionButton.textContent = `Discuss${discussionCount ? ` (${discussionCount})` : ""}`;
+  discussionButton.setAttribute("aria-expanded", String(!discussion.hidden));
+  discussionButton.setAttribute("aria-controls", discussion.id);
+  discussionButton.setAttribute("aria-label", `Discuss ${card.dataset.product}`);
 
   const saved = getSaves().includes(card.dataset.seller);
   const saveButton = $('[data-action="save-seller"]', card);
@@ -942,13 +966,21 @@ function renderDashboard() {
   const exit = document.createElement("button");
   exit.type = "button";
   exit.className = "text-button signout-button";
-  exit.textContent = "Clear local profile";
-  exit.addEventListener("click", () => {
+  exit.textContent = "Sign out and clear this browser profile";
+  exit.addEventListener("click", async () => {
+    try {
+      await window.ComradeSokoAuth?.signOut();
+    } catch (error) {
+      console.error("Could not sign out from Firebase Authentication.", error);
+      showToast("Could not sign out. Check your connection and try again.");
+      return;
+    }
     localStorage.removeItem(STORE.profile);
     $("#account-button").innerHTML = 'Join / account <span aria-hidden="true">↗</span>';
     renderDashboard();
+    renderProducts();
     updateListings();
-    showToast("Local profile cleared. Other prototype listings are still in this browser.");
+    showToast("Signed out. Your saved local listings remain in this browser.");
   });
   dashboard.append(exit);
 }
@@ -1054,8 +1086,114 @@ function renderInbox() {
   messages.scrollTop = messages.scrollHeight;
 }
 
-function commentsFor(postId) {
-  return readStore(STORE.comments, []).filter((comment) => comment.postId === postId);
+function discussionCommentsFor(targetId, targetType) {
+  return readStore(STORE.comments, []).filter((comment) => targetType === "listing"
+    ? comment.listingId === targetId
+    : comment.postId === targetId && !comment.listingId);
+}
+
+function ensureDiscussionCommentIds() {
+  const comments = readStore(STORE.comments, []);
+  let changed = false;
+  for (const comment of comments) {
+    if (!comment.id) {
+      comment.id = idFor("comment");
+      changed = true;
+    }
+  }
+  if (changed) writeStore(STORE.comments, comments);
+}
+
+function makeDiscussionForm(targetId, targetType, parentId = "") {
+  const form = document.createElement("form");
+  form.className = "discussion-form";
+  form.dataset.targetId = targetId;
+  form.dataset.targetType = targetType;
+  if (parentId) form.dataset.parentId = parentId;
+  const input = document.createElement("input");
+  input.name = "comment";
+  input.maxLength = 500;
+  input.placeholder = getProfile() ? (parentId ? "Write a reply..." : "Ask a question or share your thoughts...") : "Create a local profile to join the discussion";
+  input.setAttribute("aria-label", parentId ? "Write a reply" : "Ask a question or share your thoughts");
+  input.required = true;
+  input.disabled = !getProfile();
+  const submit = document.createElement("button");
+  submit.type = "submit";
+  submit.textContent = parentId ? "Reply" : "Comment";
+  submit.disabled = !getProfile();
+  form.append(input, submit);
+  return form;
+}
+
+function makeDiscussion(targetId, targetType) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "post-discussion";
+  const disclaimer = document.createElement("p");
+  disclaimer.className = "discussion-disclaimer";
+  disclaimer.textContent = "Local prototype discussion: comments are saved only in this browser.";
+  const comments = discussionCommentsFor(targetId, targetType);
+  const threads = document.createElement("div");
+  threads.className = "discussion-comments";
+
+  function appendComment(comment, parent, depth, ancestors) {
+    if (ancestors.has(comment.id)) return;
+    const item = document.createElement("article");
+    item.className = "discussion-comment";
+    item.style.marginLeft = `${Math.min(depth, 4) * 12}px`;
+    const heading = document.createElement("div");
+    heading.className = "discussion-comment-heading";
+    const author = document.createElement("strong");
+    author.textContent = comment.name || "Comrade";
+    const time = document.createElement("time");
+    if (comment.createdAt) {
+      time.dateTime = comment.createdAt;
+      time.textContent = new Date(comment.createdAt).toLocaleString("en-KE", { dateStyle: "medium", timeStyle: "short" });
+    }
+    heading.append(author, time);
+    const text = document.createElement("p");
+    text.textContent = comment.text;
+    item.append(heading, text);
+    const descendants = new Set(ancestors);
+    if (comment.id) descendants.add(comment.id);
+    const replies = comments.filter((reply) => reply.parentId === comment.id);
+    if (depth < 4 && comment.id) {
+      const replyButton = document.createElement("button");
+      replyButton.type = "button";
+      replyButton.className = "discussion-reply-button";
+      replyButton.textContent = "Reply";
+      replyButton.addEventListener("click", () => {
+        if (!getProfile()) {
+          accountDialog.showModal();
+          return;
+        }
+        if ($(".discussion-form", item)) return;
+        const form = makeDiscussionForm(targetId, targetType, comment.id);
+        item.append(form);
+        $("input", form).focus();
+      });
+      item.append(replyButton);
+    }
+    for (const reply of replies) appendComment(reply, item, depth + 1, descendants);
+    parent.append(item);
+  }
+
+  comments.filter((comment) => !comment.parentId).forEach((comment) => appendComment(comment, threads, 0, new Set()));
+  if (!threads.childElementCount) {
+    const empty = document.createElement("p");
+    empty.className = "discussion-empty";
+    empty.textContent = "No comments yet. Ask a question or share your thoughts.";
+    threads.append(empty);
+  }
+  wrapper.append(disclaimer, threads, makeDiscussionForm(targetId, targetType));
+  if (!getProfile()) {
+    const join = document.createElement("button");
+    join.type = "button";
+    join.className = "discussion-join-button";
+    join.textContent = "Join / account to comment";
+    join.addEventListener("click", () => accountDialog.showModal());
+    wrapper.append(join);
+  }
+  return wrapper;
 }
 
 function renderHub() {
@@ -1083,29 +1221,8 @@ function renderHub() {
     type.textContent = post.kind;
     const content = document.createElement("p");
     content.textContent = post.content;
-    const comments = document.createElement("div");
-    comments.className = "hub-comments";
-    commentsFor(post.id).forEach((comment) => {
-      const item = document.createElement("p");
-      item.textContent = `${comment.name}: ${comment.text}`;
-      comments.append(item);
-    });
     const actions = document.createElement("div");
     actions.className = "hub-post-actions";
-    const commentForm = document.createElement("form");
-    commentForm.className = "comment-form";
-    commentForm.dataset.postId = post.id;
-    const input = document.createElement("input");
-    input.name = "comment";
-    input.maxLength = 140;
-    input.placeholder = "Add a comment...";
-    input.required = true;
-    input.setAttribute("aria-label", `Comment on ${post.name}'s post`);
-    const submit = document.createElement("button");
-    submit.type = "submit";
-    submit.textContent = "Reply";
-    submit.disabled = !getProfile();
-    commentForm.append(input, submit);
     const collaborate = document.createElement("a");
     collaborate.href = `https://wa.me/?text=${encodeURIComponent(`Hi ${post.name}, I saw your campus post on ComradeSoko and would like to connect.`)}`;
     collaborate.target = "_blank";
@@ -1125,8 +1242,8 @@ function renderHub() {
     share.dataset.action = "share-post";
     share.dataset.postId = post.id;
     share.textContent = "Share";
-    actions.append(commentForm, message, share, collaborate);
-    card.append(meta, type, content, comments, actions);
+    actions.append(message, share, collaborate);
+    card.append(meta, type, content, makeDiscussion(post.id, "hub"), actions);
     feed.append(card);
   }
   if (!institution) {
@@ -1239,6 +1356,7 @@ async function onProductSubmit(event) {
 
 function initializeProfile() {
   populateInstitutionSelectors();
+  ensureDiscussionCommentIds();
   const profile = getProfile();
   if (profile) {
     campusFilter.value = profile.institution;
@@ -1300,6 +1418,13 @@ listingGrid.addEventListener("click", (event) => {
   const card = event.target.closest(".listing-card");
   if (!button || !card) return;
 
+  if (button.dataset.action === "toggle-discussion") {
+    const discussion = $(".listing-discussion", card);
+    discussion.hidden = !discussion.hidden;
+    button.setAttribute("aria-expanded", String(!discussion.hidden));
+    if (!discussion.hidden) $(".discussion-form input", discussion)?.focus();
+    return;
+  }
   if (button.dataset.action === "view-seller") {
     renderSellerProfile(card);
     return;
@@ -1395,10 +1520,11 @@ $("#partner-join-button").addEventListener("click", () => {
   updateProfileRoleFields();
 });
 
-$("#account-form").addEventListener("submit", (event) => {
+$("#account-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   const previousProfile = getProfile();
-  const profile = {
+  const user = window.ComradeSokoAuth?.getCurrentUser();
+  const profileDetails = {
     id: previousProfile?.id || idFor("user"),
     name: $("#profile-name").value.trim(),
     role: $("#profile-role").value,
@@ -1409,15 +1535,35 @@ $("#account-form").addEventListener("submit", (event) => {
     providerAgreementAcknowledged: $("#profile-role").value === "local-provider" && $("#provider-agreement-check").checked,
     createdAt: getProfile()?.createdAt || new Date().toISOString()
   };
+  let profile = profileDetails;
+  const photo = $("#profile-photo").files[0];
+  if (user && (user.phoneNumber || user.emailVerified) && photo) {
+    try {
+      profile = await window.ComradeSokoAuth.completeProfile(profileDetails, photo);
+    } catch (error) {
+      console.error("Could not complete optional Firebase profile sync.", error);
+      showToast(error.message || "Could not sync the verified profile. Check your connection and try again.");
+      return;
+    }
+  }
   if (writeStore(STORE.profile, profile)) {
     campusFilter.value = profile.institution;
     $("#account-button").textContent = accountButtonLabel(profile);
+    renderProducts();
     updateAreaOptions();
     updateListings();
     renderHub();
     renderDashboard();
     accountDialog.close();
-    showToast("Local profile saved. It only exists in this browser.");
+    showToast(user && (user.phoneNumber || user.emailVerified) && photo
+      ? "Verified profile saved in this browser and synced to Firebase."
+      : "Profile saved in this browser. Verification is optional.");
+  }
+});
+
+window.addEventListener("comradesoko:auth-state", (event) => {
+  if (event.detail?.email || event.detail?.phoneNumber) {
+    $("#auth-status").textContent = "Account verified. You can optionally sync your profile and photo to Firebase.";
   }
 });
 
@@ -1451,20 +1597,41 @@ $("#hub-post-form").addEventListener("submit", (event) => {
   }
 });
 
-$("#hub-feed-list").addEventListener("submit", (event) => {
-  const form = event.target.closest(".comment-form");
+function submitDiscussion(event) {
+  const form = event.target.closest(".discussion-form");
   if (!form) return;
   event.preventDefault();
   const profile = getProfile();
   if (!profile) {
-    showToast("Create a local profile to comment.");
+    showToast("Create a local profile to join the discussion.");
     accountDialog.showModal();
     return;
   }
+  const text = $('input[name="comment"]', form).value.trim();
+  if (!text) {
+    $('input[name="comment"]', form).focus();
+    return;
+  }
   const comments = readStore(STORE.comments, []);
-  comments.push({ postId: form.dataset.postId, name: profile.name, text: $('input[name="comment"]', form).value.trim() });
-  if (writeStore(STORE.comments, comments)) renderHub();
-});
+  const comment = {
+    id: idFor("comment"),
+    name: profile.name,
+    text,
+    parentId: form.dataset.parentId || "",
+    createdAt: new Date().toISOString()
+  };
+  if (form.dataset.targetType === "listing") comment.listingId = form.dataset.targetId;
+  else comment.postId = form.dataset.targetId;
+  if (writeStore(STORE.comments, [...comments, comment])) {
+    renderProducts();
+    updateListings();
+    renderHub();
+    showToast("Your comment was saved in this browser.");
+  }
+}
+
+listingGrid.addEventListener("submit", submitDiscussion);
+$("#hub-feed-list").addEventListener("submit", submitDiscussion);
 
 $("#hub-feed-list").addEventListener("click", (event) => {
   const button = event.target.closest("button[data-action]");
