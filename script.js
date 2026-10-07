@@ -414,27 +414,19 @@ function institutionName(value) {
 
 function roleName(role) {
   return {
-    buyer: "Buyer / comrade",
-    seller: "Student seller",
+    buyer: "Comrade member",
+    seller: "Campus entrepreneur",
     developer: "Developer / creative",
-    "local-provider": "Local campus partner"
+    "local-provider": "Local business / provider"
   }[role] || "Comrade";
 }
 
-function isSellerRole(role) {
-  return role === "seller" || role === "local-provider";
-}
-
 function accountButtonLabel(profile) {
-  const shortRole = { buyer: "Buyer", seller: "Seller", developer: "Creative", "local-provider": "Partner" }[profile.role] || "Account";
-  return `${profile.name.split(" ")[0]} · ${shortRole}`;
+  return `${profile.name.split(" ")[0]} · Member`;
 }
 
 function updateProfileRoleFields() {
   const role = $("#profile-role").value;
-  const needsShop = isSellerRole(role);
-  $("#shop-name-field").hidden = !needsShop;
-  $("#profile-shop-name").required = needsShop;
   $("#profile-area-label").textContent = role === "local-provider" ? "Area where your business serves students" : "Campus area";
   $("#profile-area").placeholder = role === "local-provider" ? "e.g. Near Main Gate, Manyatta" : "e.g. Manyatta, Main Gate";
   const providerAgreement = role === "local-provider";
@@ -1032,7 +1024,7 @@ function renderDashboard() {
     $("#dashboard-title").textContent = "Your dashboard.";
     const prompt = document.createElement("div");
     prompt.className = "dashboard-empty";
-    prompt.textContent = "Create a local profile to see your saved sellers, order intents, seller tools, campus listings, and escrow demo.";
+    prompt.textContent = "Create a local profile to see saved shops, order activity, listings, and the escrow demo.";
     const join = document.createElement("button");
     join.type = "button";
     join.className = "button button-dark";
@@ -1052,7 +1044,7 @@ function renderDashboard() {
   const orders = getOrders().filter((order) => order.buyerId === profile.id || (!order.buyerId && order.buyer === profile.name));
   const stats = document.createElement("div");
   stats.className = "dashboard-stats";
-  [["Saved sellers", savedSellers.length], ["Order intents", orders.length], ["Your role", roleName(profile.role)]].forEach(([label, value]) => {
+  [["Saved shops", savedSellers.length], ["Order activity", orders.length], ["Profile", roleName(profile.role)]].forEach(([label, value]) => {
     const item = document.createElement("div");
     item.className = "stat-card";
     const amount = document.createElement("strong");
@@ -1065,76 +1057,74 @@ function renderDashboard() {
   dashboard.append(stats);
   const personalProducts = getProducts().filter((product) => product.ownerId === profile.id || (!product.ownerId && product.owner === profile.name));
 
-  if (isSellerRole(profile.role)) {
-    const sellerHeading = document.createElement("div");
-    sellerHeading.className = "dashboard-subheading";
-    const title = document.createElement("h3");
-    title.textContent = "Your shop";
-    const add = document.createElement("button");
-    add.type = "button";
-    add.className = "button button-dark compact-button";
-    add.textContent = "+ Add product";
-    add.addEventListener("click", () => {
-      $("#product-area").value = profile.area;
-      productDialog.showModal();
-    });
-    sellerHeading.append(title, add);
-    dashboard.append(sellerHeading);
-    if (!personalProducts.length) {
-      const message = document.createElement("p");
-      message.className = "form-hint";
-      message.textContent = "No local listings yet. Add your first product to this campus soko.";
-      dashboard.append(message);
-    }
-    for (const product of personalProducts) {
-      const row = document.createElement("div");
-      row.className = "dashboard-product";
-      const summary = document.createElement("span");
-      summary.textContent = `${product.name} · KSh ${Number(product.price).toLocaleString("en-KE")} · ${product.views || 0} profile views`;
-      const toggle = document.createElement("button");
-      toggle.type = "button";
-      toggle.className = "text-button";
-      toggle.dataset.productId = product.id;
-      toggle.dataset.action = "toggle-stock";
-      toggle.textContent = product.soldOut ? "Mark available" : "Mark sold out";
-      row.append(summary, toggle);
-      dashboard.append(row);
-    }
-  } else {
-    const summary = document.createElement("div");
-    summary.className = "dashboard-subheading";
-    const title = document.createElement("h3");
-    title.textContent = "Your recent order intents";
-    summary.append(title);
-    dashboard.append(summary);
-    const recent = orders.slice(-4).reverse();
-    const orderList = document.createElement("div");
-    orderList.className = "orders-list";
-    if (!recent.length) {
-      const message = document.createElement("p");
-      message.className = "form-hint";
-      message.textContent = "No order intents yet. WhatsApp orders you start from listings appear here.";
-      orderList.append(message);
-    }
-    recent.forEach((order) => {
-      const row = document.createElement("p");
-      row.textContent = `${order.product} · ${order.seller} · ${new Date(order.createdAt).toLocaleDateString()}`;
-      orderList.append(row);
-    });
-    dashboard.append(orderList);
+  const sellerHeading = document.createElement("div");
+  sellerHeading.className = "dashboard-subheading";
+  const title = document.createElement("h3");
+  title.textContent = "Your listings";
+  const add = document.createElement("button");
+  add.type = "button";
+  add.className = "button button-dark compact-button";
+  add.textContent = "+ Add listing";
+  add.addEventListener("click", () => {
+    $("#product-area").value = profile.area;
+    productDialog.showModal();
+  });
+  sellerHeading.append(title, add);
+  dashboard.append(sellerHeading);
+  if (!personalProducts.length) {
+    const message = document.createElement("p");
+    message.className = "form-hint";
+    message.textContent = "No local listings yet. Add your first product to this campus soko.";
+    dashboard.append(message);
   }
+  for (const product of personalProducts) {
+    const row = document.createElement("div");
+    row.className = "dashboard-product";
+    const summary = document.createElement("span");
+    summary.textContent = `${product.name} · KSh ${Number(product.price).toLocaleString("en-KE")} · ${product.views || 0} profile views`;
+    const toggle = document.createElement("button");
+    toggle.type = "button";
+    toggle.className = "text-button";
+    toggle.dataset.productId = product.id;
+    toggle.dataset.action = "toggle-stock";
+    toggle.textContent = product.soldOut ? "Mark available" : "Mark sold out";
+    row.append(summary, toggle);
+    dashboard.append(row);
+  }
+
+  const orderHeading = document.createElement("div");
+  orderHeading.className = "dashboard-subheading";
+  const orderTitle = document.createElement("h3");
+  orderTitle.textContent = "Your recent orders";
+  orderHeading.append(orderTitle);
+  dashboard.append(orderHeading);
+  const recent = orders.slice(-4).reverse();
+  const orderList = document.createElement("div");
+  orderList.className = "orders-list";
+  if (!recent.length) {
+    const message = document.createElement("p");
+    message.className = "form-hint";
+    message.textContent = "Orders you start from listings appear here.";
+    orderList.append(message);
+  }
+  recent.forEach((order) => {
+    const row = document.createElement("p");
+    row.textContent = `${order.product} · ${order.seller} · ${new Date(order.createdAt).toLocaleDateString()}`;
+    orderList.append(row);
+  });
+  dashboard.append(orderList);
 
   renderEscrowDashboard(dashboard, profile);
 
   const savedHeading = document.createElement("div");
   savedHeading.className = "dashboard-subheading";
   const savedTitle = document.createElement("h3");
-  savedTitle.textContent = "Saved sellers";
+  savedTitle.textContent = "Saved shops";
   savedHeading.append(savedTitle);
   dashboard.append(savedHeading);
   const savedList = document.createElement("p");
   savedList.className = "form-hint";
-  savedList.textContent = savedSellers.length ? savedSellers.join(" · ") : "Tap ♡ on a seller to save them here.";
+  savedList.textContent = savedSellers.length ? savedSellers.join(" · ") : "Tap ♡ on a shop to save it here.";
   dashboard.append(savedList);
 
   const exit = document.createElement("button");
@@ -1464,14 +1454,14 @@ function updateConditionalFields() {
 async function onProductSubmit(event) {
   event.preventDefault();
   const profile = getProfile();
-  if (!profile || !isSellerRole(profile.role)) {
-    showToast("Save a seller or local-provider profile before posting a product.");
+  if (!profile) {
+    showToast("Create a ComradeSoko profile before posting a product.");
     productDialog.close();
     accountDialog.showModal();
     return;
   }
-  if (profile.role === "seller" && getProducts().filter((product) => product.ownerId === profile.id).length >= 20) {
-    showToast("Comrade Sellers can have up to 20 products in this prototype.");
+  if (profile.role !== "local-provider" && getProducts().filter((product) => product.ownerId === profile.id).length >= 20) {
+    showToast("Campus member profiles can have up to 20 listings in this prototype.");
     return;
   }
   const photos = [...$("#product-photos").files];
@@ -1705,7 +1695,7 @@ $("#account-form").addEventListener("submit", async (event) => {
     id: previousProfile?.id || idFor("user"),
     name: $("#profile-name").value.trim(),
     role: $("#profile-role").value,
-    shopName: isSellerRole($("#profile-role").value) ? ($("#profile-shop-name").value.trim() || $("#profile-name").value.trim()) : "",
+    shopName: $("#profile-shop-name").value.trim(),
     institution: $("#profile-campus").value,
     area: $("#profile-area").value.trim(),
     phone: $("#profile-phone").value.trim(),

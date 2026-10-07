@@ -15,10 +15,10 @@
       href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     >
-    <link rel="stylesheet" href="styles.css?v=modern-soko">
+    <link rel="stylesheet" href="styles.css?v=shopfront">
     <script src="institutions.js" defer></script>
     <script src="tvet-institutions.js" defer></script>
-    <script src="script.js?v=modern-soko" defer></script>
+    <script src="script.js?v=shopfront" defer></script>
     <script type="module" src="firebase-auth.js"></script>
   </head>
   <body>
@@ -30,10 +30,10 @@
         </a>
         <nav class="main-nav" aria-label="Main navigation">
           <a class="nav-link active" href="#discover">Discover</a>
-          <a class="nav-link" href="#categories">Categories</a>
+          <a class="nav-link" href="#categories">Shop categories</a>
           <a class="nav-link" href="#trending">Trending</a>
           <a class="nav-link" href="#house-hunting">Rooms</a>
-          <a class="nav-link" href="#developers-hub">Comrades</a>
+          <a class="nav-link" href="#developers-hub">Community</a>
           <a class="nav-link" href="#inbox">Inbox</a>
         </nav>
         <button class="button button-dark header-cta" type="button" id="account-button">Join / account <span aria-hidden="true">↗</span></button>
@@ -64,7 +64,7 @@
         <div class="hero-copy">
           <div class="eyebrow"><span class="live-dot"></span> YOUR CAMPUS. YOUR PEOPLE. YOUR SOKO.</div>
           <h1>Campus life,<br><span>sorted.</span></h1>
-          <p class="hero-description">Soko la Comrades na Majirani. Find gas, water, chapati, fresh fades and the people making campus happen. We connect buyers and sellers; we are not the seller.</p>
+          <p class="hero-description">Soko la Comrades na Majirani. Find what you need, share what you offer, and support the people making campus happen. Every member can shop and sell.</p>
           <form class="search-bar" id="search-form" role="search">
             <label class="search-field">
               <span class="search-icon" aria-hidden="true">⌕</span>
@@ -105,6 +105,34 @@
           <span class="sparkle sparkle-one">✦</span>
           <span class="sparkle sparkle-two">✧</span>
         </div>
+      </section>
+
+      <section class="shopping-promo" aria-labelledby="shopping-promo-title">
+        <div class="shopping-promo-copy">
+          <span class="promo-kicker"><span aria-hidden="true">✳</span> THE CAMPUS SOKO, ALL IN ONE PLACE</span>
+          <h2 id="shopping-promo-title">Find your next campus favourite.</h2>
+          <p>Explore goods, services, rooms, and local talent around your institution. Shop from a comrade, share your own hustle, or do both.</p>
+          <a class="promo-primary-link" href="#trending">Explore the soko <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="promo-shortcuts" aria-label="Explore ComradeSoko">
+          <a class="promo-shortcut" href="#categories">
+            <span class="promo-shortcut-icon promo-icon-market" aria-hidden="true">🛍️</span>
+            <span><strong>Shop the soko</strong><small>Browse campus finds</small></span>
+            <span class="promo-shortcut-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="promo-shortcut" href="#house-hunting">
+            <span class="promo-shortcut-icon promo-icon-home" aria-hidden="true">⌂</span>
+            <span><strong>Find a room</strong><small>Explore near-campus stays</small></span>
+            <span class="promo-shortcut-arrow" aria-hidden="true">↗</span>
+          </a>
+          <a class="promo-shortcut" href="#developers-hub">
+            <span class="promo-shortcut-icon promo-icon-community" aria-hidden="true">✳</span>
+            <span><strong>Meet your people</strong><small>Discover campus talent</small></span>
+            <span class="promo-shortcut-arrow" aria-hidden="true">↗</span>
+          </a>
+        </div>
+        <span class="promo-decoration promo-decoration-one" aria-hidden="true">✦</span>
+        <span class="promo-decoration promo-decoration-two" aria-hidden="true">✳</span>
       </section>
 
       <section class="market-section" id="categories">
@@ -375,10 +403,10 @@
           <summary>Who we are, how the marketplace works &amp; community rules</summary>
           <div class="policy-copy">
             <h3>Who we are</h3>
-            <p>ComradeSoko — “Soko la Comrades na Majirani” — is intended to link Comrade Sellers (students), Local Providers / Jirani Sellers (nearby businesses), and buyers around Kenyan institutions. We introduce buyers and sellers; we do not own or sell listed goods.</p>
-            <p>Proposed account pricing: Buyers join free; Comrade Sellers join free with a limit of 20 products; Local Providers receive a 30-day free trial before the proposed monthly plans. No fees or subscriptions are collected by this prototype.</p>
+            <p>ComradeSoko — “Soko la Comrades na Majirani” — is intended to connect students, nearby businesses, and campus communities around Kenyan institutions. Every member can browse and order from others, and can also list their own goods or services. People participate as a buyer or seller depending on each transaction; neither is an exclusive account role. We introduce community members; we do not own or sell listed goods.</p>
+            <p>Joining is free in this prototype. Proposed future listing limits and Local Provider subscriptions are not active, and no fees or subscriptions are collected here.</p>
             <h3>Direct transactions</h3>
-            <p>Buyers and sellers arrange orders directly, currently through WhatsApp. ComradeSoko does not currently handle goods, delivery, payments, or escrow. M-Pesa Direct and cash on delivery are arrangements between buyer and seller; M-Pesa transaction charges are the buyer’s responsibility unless agreed otherwise. Future escrow fees, if introduced, are proposed at 2% for Comrade Sellers and 4% for Jirani Providers and will require separate terms. Marketplace listings and contact links are demonstration data in this prototype.</p>
+            <p>Members arrange each order directly with one another, currently through WhatsApp. The same person may buy in one transaction and sell in another. ComradeSoko does not currently handle goods, delivery, payments, or escrow. M-Pesa Direct and cash on delivery are arrangements between the parties; M-Pesa transaction charges are the person paying unless agreed otherwise. Any future escrow fees are unapproved proposals requiring separate terms. Marketplace listings and contact links are demonstration data in this prototype.</p>
             <p>Our proposed terms do not replace rights or responsibilities that apply under Kenyan law. Any limitation of liability is subject to applicable law and legal review; please resolve delivery timing, quality, availability, and payment details directly with the seller before ordering.</p>
             <h3>Eligibility and prohibited listings</h3>
             <p>Proposed launch rules: users must be at least 18, use their real name and phone number, and post genuine photos. Do not list drugs, weapons, stolen goods, exam leakages, adult content, or other unlawful or harmful items. The prototype cannot verify age, identity, phone ownership, listing ownership, or whether a report is true.</p>
@@ -437,7 +465,7 @@
         </details>
 
         <details class="policy-card" id="buyer-policy">
-          <summary>Buyer policy &amp; support</summary>
+          <summary>Ordering, delivery tips &amp; support (for everyone)</summary>
           <div class="policy-copy">
             <ul>
               <li>For delivery orders, order only when you have money and are at your hostel or agreed delivery location.</li>
@@ -449,7 +477,7 @@
         </details>
 
         <details class="policy-card" id="provider-agreement">
-          <summary>Local Provider agreement (proposed)</summary>
+          <summary>Local Provider agreement (proposed, for nearby businesses)</summary>
           <div class="policy-copy">
             <p>By registering as a Jirani Provider, I confirm that my business is legal and within 5 km of the schools I serve; my prices are fair to comrades; and I will deliver on time or communicate delays. I understand the proposed 30-day free period and subscription fees required to remain verified after that period.</p>
             <p>I understand that shop photos may be used by ComradeSoko for TikTok marketing only under the proposed provider agreement. Two verified scam reports may result in a permanent ban and phone-number blacklist after review. Verification, subscriptions, marketing use, reporting, and digital signatures are not active in this browser prototype.</p>
@@ -475,8 +503,8 @@
       <nav class="footer-policies" aria-label="Community policies">
         <a href="#terms-of-use">Terms</a>
         <a href="#privacy-policy">Privacy</a>
-        <a href="#seller-policy">Seller policy</a>
-        <a href="#buyer-policy">Buyer policy</a>
+        <a href="#seller-policy">Listing policy</a>
+        <a href="#buyer-policy">Ordering tips</a>
       </nav>
       <span class="footer-location">Kenya <span aria-hidden="true">✳</span></span>
       <small>© 2026 ComradeSoko. Good finds, close to campus.</small>
@@ -487,7 +515,7 @@
         <button class="dialog-close" type="button" data-close aria-label="Close">×</button>
         <div class="eyebrow section-eyebrow">JOIN YOUR CAMPUS SOKO</div>
         <h2 id="account-dialog-title">Create your local profile.</h2>
-        <p class="dialog-description">Create a local profile now, or optionally verify your email or phone with Firebase. Verification and a profile photo do not prove legal identity. Don’t upload ID documents here.</p>
+        <p class="dialog-description">Every profile can browse, order, and list goods or services. The profile type helps describe your campus or business context; it does not lock you into being only a buyer or only a seller. You can optionally verify your email or phone with Firebase. Verification and a profile photo do not prove legal identity. Don’t upload ID documents here.</p>
         <fieldset class="auth-methods">
           <legend>Optional account verification</legend>
           <label>Email<input id="auth-email" type="email" autocomplete="email" placeholder="you@example.com"></label>
@@ -502,10 +530,10 @@
         </fieldset>
         <fieldset class="kyc-fields" id="kyc-fields">
         <label>Your name<input id="profile-name" required maxlength="50" autocomplete="name"></label>
-        <label>I’m here as
-          <select id="profile-role"><option value="buyer">Buyer / comrade</option><option value="seller">Student seller / business owner</option><option value="developer">Developer / creative</option><option value="local-provider">Local seller or service provider (not a student)</option></select>
+        <label>My profile describes me as
+          <select id="profile-role"><option value="buyer">Comrade / campus member</option><option value="seller">Campus entrepreneur / student</option><option value="developer">Developer / creative</option><option value="local-provider">Nearby business / service provider</option></select>
         </label>
-        <label id="shop-name-field" hidden>Business or shop name<input id="profile-shop-name" maxlength="60" placeholder="e.g. Mama T’s Kitchen"></label>
+        <label id="shop-name-field">Shop or service name <span class="optional-label">Optional · you can add this when listing</span><input id="profile-shop-name" maxlength="60" placeholder="e.g. Mama T’s Kitchen"></label>
         <label>Institution
           <select id="profile-campus" required>
             <option value="">Choose institution</option>
